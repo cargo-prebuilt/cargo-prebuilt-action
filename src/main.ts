@@ -53,7 +53,7 @@ async function run(): Promise<void> {
       ? '.zip'
       : '.tar.gz'
 
-    const directory = tc.find('cargo-prebuilt', prebuiltVersion, prebuiltTarget)
+    let directory = tc.find('cargo-prebuilt', prebuiltVersion, prebuiltTarget)
     core.debug(`Found cargo-prebuilt tool cache at ${directory}`)
     core.addPath(directory)
 
@@ -72,21 +72,20 @@ async function run(): Promise<void> {
         else throw new Error('Could not install cargo-prebuilt')
       }
 
-      let prebuiltExtracted
       if (prebuiltTarget.includes('windows')) {
-        prebuiltExtracted = await tc.extractZip(prebuiltPath)
+        directory = await tc.extractZip(prebuiltPath)
       } else {
-        prebuiltExtracted = await tc.extractTar(prebuiltPath)
+        directory = await tc.extractTar(prebuiltPath)
       }
 
-      const cachedPath = await tc.cacheDir(
-        prebuiltExtracted,
+      directory = await tc.cacheDir(
+        directory,
         'cargo-prebuilt',
         prebuiltVersion,
         prebuiltTarget
       )
 
-      core.addPath(cachedPath)
+      core.addPath(directory)
       core.info('Installed cargo-prebuilt')
     }
     core.debug(`cargo-prebuilt: ${directory}`)

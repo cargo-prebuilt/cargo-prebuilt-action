@@ -83,7 +83,7 @@ function run() {
             const fileEnding = prebuiltTarget.includes('windows')
                 ? '.zip'
                 : '.tar.gz';
-            const directory = tc.find('cargo-prebuilt', prebuiltVersion, prebuiltTarget);
+            let directory = tc.find('cargo-prebuilt', prebuiltVersion, prebuiltTarget);
             core.debug(`Found cargo-prebuilt tool cache at ${directory}`);
             core.addPath(directory);
             if (directory === '') {
@@ -98,15 +98,14 @@ function run() {
                     else
                         throw new Error('Could not install cargo-prebuilt');
                 }
-                let prebuiltExtracted;
                 if (prebuiltTarget.includes('windows')) {
-                    prebuiltExtracted = yield tc.extractZip(prebuiltPath);
+                    directory = yield tc.extractZip(prebuiltPath);
                 }
                 else {
-                    prebuiltExtracted = yield tc.extractTar(prebuiltPath);
+                    directory = yield tc.extractTar(prebuiltPath);
                 }
-                const cachedPath = yield tc.cacheDir(prebuiltExtracted, 'cargo-prebuilt', prebuiltVersion, prebuiltTarget);
-                core.addPath(cachedPath);
+                directory = yield tc.cacheDir(directory, 'cargo-prebuilt', prebuiltVersion, prebuiltTarget);
+                core.addPath(directory);
                 core.info('Installed cargo-prebuilt');
             }
             core.debug(`cargo-prebuilt: ${directory}`);
