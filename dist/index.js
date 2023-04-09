@@ -109,21 +109,23 @@ function run() {
                 core.info('Installed cargo-prebuilt');
             }
             core.debug(`cargo-prebuilt: ${directory}`);
-            // Install tools
-            const args = [];
-            if (prebuiltTarget !== 'current')
-                args.push(`--target=${prebuiltToolsTarget}`);
-            if (prebuiltToolsIndex !== '')
-                args.push(`--index=${prebuiltToolsIndex}`);
-            if (prebuiltToolsAuth !== '')
-                args.push(`--auth=${prebuiltToolsAuth}`);
-            if (prebuiltToolsPath !== '')
-                args.push(`--path=${prebuiltToolsPath}`);
-            args.push(prebuiltTools);
-            yield exec.exec(`cargo-prebuilt`, args);
-            if (prebuiltToolsPath !== '')
-                core.addPath(prebuiltToolsPath);
-            core.debug(`Installed tools ${prebuiltTools}`);
+            if (prebuiltTools !== '') {
+                // Install tools
+                const args = [];
+                if (prebuiltToolsTarget !== 'current')
+                    args.push(`--target=${prebuiltToolsTarget}`);
+                if (prebuiltToolsIndex !== '')
+                    args.push(`--index=${prebuiltToolsIndex}`);
+                if (prebuiltToolsAuth !== '')
+                    args.push(`--auth=${prebuiltToolsAuth}`);
+                if (prebuiltToolsPath !== '')
+                    args.push(`--path=${prebuiltToolsPath}`);
+                args.push(prebuiltTools);
+                yield exec.exec(`cargo-prebuilt`, args);
+                if (prebuiltToolsPath !== '')
+                    core.addPath(prebuiltToolsPath);
+                core.debug(`Installed tools ${prebuiltTools}`);
+            }
         }
         catch (error) {
             if (error instanceof Error)

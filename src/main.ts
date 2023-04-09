@@ -90,19 +90,21 @@ async function run(): Promise<void> {
     }
     core.debug(`cargo-prebuilt: ${directory}`)
 
-    // Install tools
-    const args: string[] = []
-    if (prebuiltTarget !== 'current')
-      args.push(`--target=${prebuiltToolsTarget}`)
-    if (prebuiltToolsIndex !== '') args.push(`--index=${prebuiltToolsIndex}`)
-    if (prebuiltToolsAuth !== '') args.push(`--auth=${prebuiltToolsAuth}`)
-    if (prebuiltToolsPath !== '') args.push(`--path=${prebuiltToolsPath}`)
-    args.push(prebuiltTools)
+    if (prebuiltTools !== '') {
+      // Install tools
+      const args: string[] = []
+      if (prebuiltToolsTarget !== 'current')
+        args.push(`--target=${prebuiltToolsTarget}`)
+      if (prebuiltToolsIndex !== '') args.push(`--index=${prebuiltToolsIndex}`)
+      if (prebuiltToolsAuth !== '') args.push(`--auth=${prebuiltToolsAuth}`)
+      if (prebuiltToolsPath !== '') args.push(`--path=${prebuiltToolsPath}`)
+      args.push(prebuiltTools)
 
-    await exec.exec(`cargo-prebuilt`, args)
+      await exec.exec(`cargo-prebuilt`, args)
 
-    if (prebuiltToolsPath !== '') core.addPath(prebuiltToolsPath)
-    core.debug(`Installed tools ${prebuiltTools}`)
+      if (prebuiltToolsPath !== '') core.addPath(prebuiltToolsPath)
+      core.debug(`Installed tools ${prebuiltTools}`)
+    }
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
