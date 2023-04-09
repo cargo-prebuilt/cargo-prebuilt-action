@@ -109,6 +109,7 @@ function run() {
                 core.addPath(cachedPath);
                 core.info('Installed cargo-prebuilt');
             }
+            core.debug(`cargo-prebuilt: ${directory}`);
             // Install tools
             const args = [];
             if (prebuiltTarget !== 'current')

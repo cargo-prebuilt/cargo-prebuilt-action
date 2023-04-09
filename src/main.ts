@@ -89,6 +89,7 @@ async function run(): Promise<void> {
       core.addPath(cachedPath)
       core.info('Installed cargo-prebuilt')
     }
+    core.debug(`cargo-prebuilt: ${directory}`)
 
     // Install tools
     const args: string[] = []
