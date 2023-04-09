@@ -99,15 +99,9 @@ async function run(): Promise<void> {
     if (prebuiltToolsPath !== '') args.push(`--path=${prebuiltToolsPath}`)
     args.push(prebuiltTools)
 
-    await exec.exec(`cargo-prebuilt`, args, {
-      env: {
-        PREBUILT_PATH: '/prebuilt'
-      }
-    })
+    await exec.exec(`cargo-prebuilt`, args)
 
     if (prebuiltToolsPath !== '') core.addPath(prebuiltToolsPath)
-    else core.addPath('/prebuilt')
-
     core.debug(`Installed tools ${prebuiltTools}`)
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)

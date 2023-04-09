@@ -120,15 +120,9 @@ function run() {
             if (prebuiltToolsPath !== '')
                 args.push(`--path=${prebuiltToolsPath}`);
             args.push(prebuiltTools);
-            yield exec.exec(`cargo-prebuilt`, args, {
-                env: {
-                    PREBUILT_PATH: '/prebuilt'
-                }
-            });
+            yield exec.exec(`cargo-prebuilt`, args);
             if (prebuiltToolsPath !== '')
                 core.addPath(prebuiltToolsPath);
-            else
-                core.addPath('/prebuilt');
             core.debug(`Installed tools ${prebuiltTools}`);
         }
         catch (error) {
