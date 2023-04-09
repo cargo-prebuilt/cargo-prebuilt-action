@@ -100,10 +100,10 @@ function run() {
                 }
                 let prebuiltExtracted;
                 if (prebuiltTarget.includes('windows')) {
-                    prebuiltExtracted = yield tc.extractZip(prebuiltPath, '/prebuilt');
+                    prebuiltExtracted = yield tc.extractZip(prebuiltPath);
                 }
                 else {
-                    prebuiltExtracted = yield tc.extractTar(prebuiltPath, '/prebuilt');
+                    prebuiltExtracted = yield tc.extractTar(prebuiltPath);
                 }
                 const cachedPath = yield tc.cacheDir(prebuiltExtracted, 'cargo-prebuilt', prebuiltVersion, prebuiltTarget);
                 core.addPath(cachedPath);
@@ -122,13 +122,13 @@ function run() {
             args.push(prebuiltTools);
             yield exec.exec(directory, args, {
                 env: {
-                    PREBUILT_PATH: '/prebuilt-tools'
+                    PREBUILT_PATH: '/prebuilt'
                 }
             });
             if (prebuiltToolsPath !== '')
                 core.addPath(prebuiltToolsPath);
             else
-                core.addPath('/prebuilt-tools');
+                core.addPath('/prebuilt');
             core.debug(`Installed tools ${prebuiltTools}`);
         }
         catch (error) {

@@ -74,9 +74,9 @@ async function run(): Promise<void> {
 
       let prebuiltExtracted
       if (prebuiltTarget.includes('windows')) {
-        prebuiltExtracted = await tc.extractZip(prebuiltPath, '/prebuilt')
+        prebuiltExtracted = await tc.extractZip(prebuiltPath)
       } else {
-        prebuiltExtracted = await tc.extractTar(prebuiltPath, '/prebuilt')
+        prebuiltExtracted = await tc.extractTar(prebuiltPath)
       }
 
       const cachedPath = await tc.cacheDir(
@@ -101,12 +101,12 @@ async function run(): Promise<void> {
 
     await exec.exec(directory, args, {
       env: {
-        PREBUILT_PATH: '/prebuilt-tools'
+        PREBUILT_PATH: '/prebuilt'
       }
     })
 
     if (prebuiltToolsPath !== '') core.addPath(prebuiltToolsPath)
-    else core.addPath('/prebuilt-tools')
+    else core.addPath('/prebuilt')
 
     core.debug(`Installed tools ${prebuiltTools}`)
   } catch (error) {
