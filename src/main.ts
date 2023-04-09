@@ -22,7 +22,7 @@ async function run(): Promise<void> {
     }
     if (prebuiltVersion === 'latest') {
       const out = await exec.getExecOutput(
-        'git ls-remote --tags --refs https://github.com/crow-rest/cargo-prebuilt.git'
+        'git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git'
       )
 
       const re = /([0-9]\.[0-9]\.[0-9])/g
@@ -67,13 +67,13 @@ async function run(): Promise<void> {
       let prebuiltPath
       try {
         prebuiltPath = await tc.downloadTool(
-          `https://github.com/crow-rest/cargo-prebuilt/releases/download/v${prebuiltVersion}/${prebuiltTarget}${fileEnding}`
+          `https://github.com/cargo-prebuilt/cargo-prebuilt/releases/download/v${prebuiltVersion}/${prebuiltTarget}${fileEnding}`
         )
       } catch {
         core.info('Failed to install main version using fallback version')
         if (fallbackVersion)
           prebuiltPath = await tc.downloadTool(
-            `https://github.com/crow-rest/cargo-prebuilt/releases/download/v${fallbackVersion}/${prebuiltTarget}${fileEnding}`
+            `https://github.com/cargo-prebuilt/cargo-prebuilt/releases/download/v${fallbackVersion}/${prebuiltTarget}${fileEnding}`
           )
         else throw new Error('Could not install cargo-prebuilt')
       }
@@ -121,7 +121,7 @@ async function run(): Promise<void> {
           version = s[1]
         } else {
           const res = await client.get(
-            `https://github.com/crow-rest/cargo-prebuilt-index/releases/download/stable-index/${s[0]}`
+            `https://github.com/cargo-prebuilt/index/releases/download/stable-index/${s[0]}`
           )
           if (res.message.statusCode === 200) {
             version = await res.readBody()
@@ -138,7 +138,7 @@ async function run(): Promise<void> {
           let tDir
           try {
             tDir = await tc.downloadTool(
-              `https://github.com/crow-rest/cargo-prebuilt-index/releases/download/${s[0]}-${version}/${target}.tar.gz`
+              `https://github.com/cargo-prebuilt/index/releases/download/${s[0]}-${version}/${target}.tar.gz`
             )
           } catch {
             throw new Error(`Could not install ${s[0]}@${version}`)

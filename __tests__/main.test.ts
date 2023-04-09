@@ -7,7 +7,7 @@ test('throws invalid number', async () => {
 
 test('get tag', async () => {
   const out = await exec.getExecOutput(
-    'git ls-remote --tags --refs https://github.com/crow-rest/cargo-prebuilt.git'
+    'git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git'
   )
 
   const re = /([0-9]\.[0-9]\.[0.9])/g

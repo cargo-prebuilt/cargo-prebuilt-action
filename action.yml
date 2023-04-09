@@ -1,6 +1,6 @@
 name: 'Install cargo-prebuilt'
 description: 'Install cargo prebuilt to a runner'
-author: 'harmless-tech, crow-rest'
+author: 'harmless-tech, cargo-prebuilt'
 branding:
   icon: arrow-down-circle
   color: gray-dark
