@@ -99,7 +99,7 @@ async function run(): Promise<void> {
     if (prebuiltToolsPath !== '') args.push(`--path=${prebuiltToolsPath}`)
     args.push(prebuiltTools)
 
-    await exec.exec(`${directory}/cargo-prebuilt`, args, {
+    await exec.exec(`cargo-prebuilt`, args, {
       env: {
         PREBUILT_PATH: '/prebuilt'
       }

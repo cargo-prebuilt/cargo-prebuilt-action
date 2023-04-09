@@ -120,7 +120,7 @@ function run() {
             if (prebuiltToolsPath !== '')
                 args.push(`--path=${prebuiltToolsPath}`);
             args.push(prebuiltTools);
-            yield exec.exec(`${directory}/cargo-prebuilt`, args, {
+            yield exec.exec(`cargo-prebuilt`, args, {
                 env: {
                     PREBUILT_PATH: '/prebuilt'
                 }
