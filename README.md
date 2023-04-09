@@ -15,13 +15,14 @@ See:
 - target: Defaults to current
 - tools: Defaults to ''
 - tools-target: Defaults to current
-- always-install: Defaults to true
+- tools-index: Defaults to ''
+- tools-auth: Defaults to ''
+- tools-path: Defaults to ''
 
 ### Outputs
 
 - version
 - target
-- tools-installed
 
 ### Usage
 
@@ -72,6 +73,6 @@ jobs:
       - name: Install cargo-prebuilt
         uses: cargo-prebuilt/cargo-prebuilt-action@v1
         with:
-          version: 0.3.0
+          version: 0.4.1
           target: aarch64-apple-darwin
 ```

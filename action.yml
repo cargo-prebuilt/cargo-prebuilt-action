@@ -19,16 +19,20 @@ inputs:
   tools-target:
     description: 'Target for the version of the tools to install'
     default: current
-  always-install:
-    description: 'If the current installed version of cargo-prebuilt should be overridden'
-    default: 'true'
+  tools-index:
+    description: 'Index to use to install tools from'
+    default: ''
+  tools-auth:
+    description: 'Auth token for index if needed'
+    default: ''
+  tools-path:
+    description: 'Path where tools are installed'
+    default: ''
 outputs:
   version:
     description: 'Version that was installed'
   target:
     description: 'Target that was installed'
-  tools-installed:
-    description: 'A CSV of the tools that were installed (EX: just@1.8.0,rtx-cli@1.22.5)'
 runs:
   using: 'node16'
   main: 'dist/index.js'

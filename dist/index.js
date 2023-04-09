@@ -41,9 +41,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const tc = __importStar(__nccwpck_require__(7784));
-const httpm = __importStar(__nccwpck_require__(6255));
 const exec = __importStar(__nccwpck_require__(1514));
-const io = __importStar(__nccwpck_require__(7436));
 const utils_1 = __nccwpck_require__(918);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -51,15 +49,11 @@ function run() {
             let prebuiltVersion = core.getInput('version');
             let fallbackVersion;
             let prebuiltTarget = core.getInput('target');
-            const prebuiltOverride = core.getInput('always-install');
             const prebuiltTools = core.getInput('tools');
             const prebuiltToolsTarget = core.getInput('tools-target');
-            const client = new httpm.HttpClient();
-            if (prebuiltOverride.toLowerCase() !== 'true') {
-                const which = yield io.which('cargo-prebuilt', true);
-                if (which !== '')
-                    return;
-            }
+            const prebuiltToolsIndex = core.getInput('tools-index');
+            const prebuiltToolsAuth = core.getInput('tools-auth');
+            const prebuiltToolsPath = core.getInput('tools-path');
             if (prebuiltVersion === 'latest') {
                 const out = yield exec.getExecOutput('git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git');
                 const re = /([0-9]\.[0-9]\.[0-9])/g;
@@ -106,67 +100,36 @@ function run() {
                 }
                 let prebuiltExtracted;
                 if (prebuiltTarget.includes('windows')) {
-                    prebuiltExtracted = yield tc.extractZip(prebuiltPath, '~/.cargo-prebuilt/prebuilt');
+                    prebuiltExtracted = yield tc.extractZip(prebuiltPath, '/prebuilt');
                 }
                 else {
-                    prebuiltExtracted = yield tc.extractTar(prebuiltPath, '~/.cargo-prebuilt/prebuilt');
+                    prebuiltExtracted = yield tc.extractTar(prebuiltPath, '/prebuilt');
                 }
                 const cachedPath = yield tc.cacheDir(prebuiltExtracted, 'cargo-prebuilt', prebuiltVersion, prebuiltTarget);
                 core.addPath(cachedPath);
                 core.info('Installed cargo-prebuilt');
             }
-            // Handle tool downloads
-            let installedTools = '';
-            if (prebuiltTools !== '') {
-                const tools = prebuiltTools.split(',');
-                let target = prebuiltTarget;
-                if (prebuiltToolsTarget === 'current') {
-                    target = prebuiltTarget;
+            // Install tools
+            const args = [];
+            if (prebuiltTarget !== 'current')
+                args.push(`--target=${prebuiltToolsTarget}`);
+            if (prebuiltToolsIndex !== '')
+                args.push(`--index=${prebuiltToolsIndex}`);
+            if (prebuiltToolsAuth !== '')
+                args.push(`--auth=${prebuiltToolsAuth}`);
+            if (prebuiltToolsPath !== '')
+                args.push(`--path=${prebuiltToolsPath}`);
+            args.push(prebuiltTools);
+            yield exec.exec(directory, args, {
+                env: {
+                    PREBUILT_PATH: '/prebuilt-tools'
                 }
-                else {
-                    target = prebuiltToolsTarget;
-                }
-                for (const tool of tools) {
-                    const s = tool.split('@');
-                    let version;
-                    if (s.length > 1) {
-                        version = s[1];
-                    }
-                    else {
-                        const res = yield client.get(`https://github.com/cargo-prebuilt/index/releases/download/stable-index/${s[0]}`);
-                        if (res.message.statusCode === 200) {
-                            version = yield res.readBody();
-                        }
-                        else {
-                            throw new Error(`Could not get latest version of ${s[0]} from cargo-prebuilt-index`);
-                        }
-                    }
-                    version = version.trim();
-                    const toolDir = tc.find(s[0], version, target);
-                    if (toolDir === '') {
-                        let tDir;
-                        try {
-                            tDir = yield tc.downloadTool(`https://github.com/cargo-prebuilt/index/releases/download/${s[0]}-${version}/${target}.tar.gz`);
-                        }
-                        catch (_b) {
-                            throw new Error(`Could not install ${s[0]}@${version}`);
-                        }
-                        tDir = yield tc.extractTar(tDir, `~/.cargo-prebuilt/${s[0]}-${version}`);
-                        const cachedPath = yield tc.cacheDir(tDir, s[0], version, target);
-                        core.addPath(cachedPath);
-                        installedTools += `${s[0]}@${version},`;
-                        core.info(`Installed ${s[0]} ${version}`);
-                    }
-                    else {
-                        core.debug(`Found ${s[0]} tool cache at ${toolDir}`);
-                        installedTools += `${s[0]}@${version},`;
-                        core.addPath(toolDir);
-                    }
-                }
-            }
-            if (installedTools.length > 0)
-                installedTools = installedTools.slice(0, -1);
-            core.setOutput('tools-installed', installedTools);
+            });
+            if (prebuiltToolsPath !== '')
+                core.addPath(prebuiltToolsPath);
+            else
+                core.addPath('/prebuilt-tools');
+            core.debug(`Installed tools ${prebuiltTools}`);
         }
         catch (error) {
             if (error instanceof Error)

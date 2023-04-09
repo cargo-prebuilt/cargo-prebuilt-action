@@ -1,8 +1,6 @@
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
-import * as httpm from '@actions/http-client'
 import * as exec from '@actions/exec'
-import * as io from '@actions/io'
 import {currentTarget} from './utils'
 
 async function run(): Promise<void> {
@@ -10,16 +8,12 @@ async function run(): Promise<void> {
     let prebuiltVersion: string = core.getInput('version')
     let fallbackVersion: string | undefined
     let prebuiltTarget: string = core.getInput('target')
-    const prebuiltOverride: string = core.getInput('always-install')
     const prebuiltTools: string = core.getInput('tools')
     const prebuiltToolsTarget: string = core.getInput('tools-target')
+    const prebuiltToolsIndex: string = core.getInput('tools-index')
+    const prebuiltToolsAuth: string = core.getInput('tools-auth')
+    const prebuiltToolsPath: string = core.getInput('tools-path')
 
-    const client = new httpm.HttpClient()
-
-    if (prebuiltOverride.toLowerCase() !== 'true') {
-      const which = await io.which('cargo-prebuilt', true)
-      if (which !== '') return
-    }
     if (prebuiltVersion === 'latest') {
       const out = await exec.getExecOutput(
         'git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git'
@@ -80,15 +74,9 @@ async function run(): Promise<void> {
 
       let prebuiltExtracted
       if (prebuiltTarget.includes('windows')) {
-        prebuiltExtracted = await tc.extractZip(
-          prebuiltPath,
-          '~/.cargo-prebuilt/prebuilt'
-        )
+        prebuiltExtracted = await tc.extractZip(prebuiltPath, '/prebuilt')
       } else {
-        prebuiltExtracted = await tc.extractTar(
-          prebuiltPath,
-          '~/.cargo-prebuilt/prebuilt'
-        )
+        prebuiltExtracted = await tc.extractTar(prebuiltPath, '/prebuilt')
       }
 
       const cachedPath = await tc.cacheDir(
@@ -102,68 +90,25 @@ async function run(): Promise<void> {
       core.info('Installed cargo-prebuilt')
     }
 
-    // Handle tool downloads
-    let installedTools = ''
-    if (prebuiltTools !== '') {
-      const tools = prebuiltTools.split(',')
-      let target = prebuiltTarget
-      if (prebuiltToolsTarget === 'current') {
-        target = prebuiltTarget
-      } else {
-        target = prebuiltToolsTarget
+    // Install tools
+    const args: string[] = []
+    if (prebuiltTarget !== 'current')
+      args.push(`--target=${prebuiltToolsTarget}`)
+    if (prebuiltToolsIndex !== '') args.push(`--index=${prebuiltToolsIndex}`)
+    if (prebuiltToolsAuth !== '') args.push(`--auth=${prebuiltToolsAuth}`)
+    if (prebuiltToolsPath !== '') args.push(`--path=${prebuiltToolsPath}`)
+    args.push(prebuiltTools)
+
+    await exec.exec(directory, args, {
+      env: {
+        PREBUILT_PATH: '/prebuilt-tools'
       }
+    })
 
-      for (const tool of tools) {
-        const s = tool.split('@')
+    if (prebuiltToolsPath !== '') core.addPath(prebuiltToolsPath)
+    else core.addPath('/prebuilt-tools')
 
-        let version
-        if (s.length > 1) {
-          version = s[1]
-        } else {
-          const res = await client.get(
-            `https://github.com/cargo-prebuilt/index/releases/download/stable-index/${s[0]}`
-          )
-          if (res.message.statusCode === 200) {
-            version = await res.readBody()
-          } else {
-            throw new Error(
-              `Could not get latest version of ${s[0]} from cargo-prebuilt-index`
-            )
-          }
-        }
-        version = version.trim()
-
-        const toolDir = tc.find(s[0], version, target)
-        if (toolDir === '') {
-          let tDir
-          try {
-            tDir = await tc.downloadTool(
-              `https://github.com/cargo-prebuilt/index/releases/download/${s[0]}-${version}/${target}.tar.gz`
-            )
-          } catch {
-            throw new Error(`Could not install ${s[0]}@${version}`)
-          }
-
-          tDir = await tc.extractTar(
-            tDir,
-            `~/.cargo-prebuilt/${s[0]}-${version}`
-          )
-
-          const cachedPath = await tc.cacheDir(tDir, s[0], version, target)
-
-          core.addPath(cachedPath)
-          installedTools += `${s[0]}@${version},`
-          core.info(`Installed ${s[0]} ${version}`)
-        } else {
-          core.debug(`Found ${s[0]} tool cache at ${toolDir}`)
-          installedTools += `${s[0]}@${version},`
-          core.addPath(toolDir)
-        }
-      }
-    }
-
-    if (installedTools.length > 0) installedTools = installedTools.slice(0, -1)
-    core.setOutput('tools-installed', installedTools)
+    core.debug(`Installed tools ${prebuiltTools}`)
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
