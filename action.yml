@@ -28,6 +28,9 @@ inputs:
   tools-path:
     description: 'Path where tools are installed'
     default: ''
+  tools-ci:
+    description: 'Use the --ci flag'
+    default: 'true'
 outputs:
   version:
     description: 'Version that was installed'

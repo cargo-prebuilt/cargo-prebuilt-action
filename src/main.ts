@@ -13,6 +13,7 @@ async function run(): Promise<void> {
     const prebuiltToolsIndex: string = core.getInput('tools-index')
     const prebuiltToolsAuth: string = core.getInput('tools-auth')
     const prebuiltToolsPath: string = core.getInput('tools-path')
+    const prebuiltToolsCI: string = core.getInput('tools-ci')
 
     if (prebuiltVersion === 'latest') {
       const out = await exec.getExecOutput(
@@ -93,6 +94,7 @@ async function run(): Promise<void> {
     if (prebuiltTools !== '') {
       // Install tools
       const args: string[] = []
+      if (prebuiltToolsCI === 'true') args.push('--ci')
       if (prebuiltToolsTarget !== 'current')
         args.push(`--target=${prebuiltToolsTarget}`)
       if (prebuiltToolsIndex !== '') args.push(`--index=${prebuiltToolsIndex}`)

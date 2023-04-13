@@ -2,8 +2,7 @@
 
 [![build-test](https://github.com/cargo-prebuilt/cargo-prebuilt-action/actions/workflows/test.yml/badge.svg)](https://github.com/cargo-prebuilt/cargo-prebuilt-action/actions/workflows/test.yml)
 
-Installs cargo-prebuilt and the crates you pass to it, it also uses the tool 
-cache to store all downloaded items.
+Installs cargo-prebuilt and the crates you pass to it.
 
 See:
 - [cargo-prebuilt](https://github.com/cargo-prebuilt/cargo-prebuilt)
@@ -18,11 +17,12 @@ See:
 - tools-index: Defaults to ''
 - tools-auth: Defaults to ''
 - tools-path: Defaults to ''
+- tools-ci: Defaults to true
 
 ### Outputs
 
-- version
-- target
+- version: version of cargo-prebuilt installed
+- target: target of cargo-prebuilt installed
 
 ### Usage
 
@@ -39,7 +39,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install cargo-prebuilt
         uses: cargo-prebuilt/cargo-prebuilt-action@v1
-      - run: cargo prebuilt just
+        with:
+          tools: just,rtx-cli@1.22.5
 ```
 or
 ```yaml
@@ -55,8 +56,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install cargo-prebuilt
         uses: cargo-prebuilt/cargo-prebuilt-action@v1
-        with:
-          tools: just,rtx-cli@1.22.5
+      - run: cargo prebuilt just
 ```
 
 ```yaml
@@ -73,6 +73,6 @@ jobs:
       - name: Install cargo-prebuilt
         uses: cargo-prebuilt/cargo-prebuilt-action@v1
         with:
-          version: 0.4.1
+          version: 0.5.1
           target: aarch64-apple-darwin
 ```

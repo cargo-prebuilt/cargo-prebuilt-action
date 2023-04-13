@@ -54,6 +54,7 @@ function run() {
             const prebuiltToolsIndex = core.getInput('tools-index');
             const prebuiltToolsAuth = core.getInput('tools-auth');
             const prebuiltToolsPath = core.getInput('tools-path');
+            const prebuiltToolsCI = core.getInput('tools-ci');
             if (prebuiltVersion === 'latest') {
                 const out = yield exec.getExecOutput('git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git');
                 const re = /([0-9]\.[0-9]\.[0-9])/g;
@@ -112,6 +113,8 @@ function run() {
             if (prebuiltTools !== '') {
                 // Install tools
                 const args = [];
+                if (prebuiltToolsCI === 'true')
+                    args.push('--ci');
                 if (prebuiltToolsTarget !== 'current')
                     args.push(`--target=${prebuiltToolsTarget}`);
                 if (prebuiltToolsIndex !== '')
