@@ -16,6 +16,9 @@ on:
       - '**.md'
   workflow_dispatch:
 
+env:
+  PNPM_VERSION: 8.5    
+
 jobs:
   check-dist:
     runs-on: ubuntu-latest
