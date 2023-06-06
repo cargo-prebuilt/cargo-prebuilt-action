@@ -50,7 +50,7 @@ async function run(): Promise<void> {
     core.setOutput('version', prebuiltVersion)
     core.setOutput('target', prebuiltTarget)
 
-    const fileEnding: string = prebuiltTarget.includes('windows')
+    const fileEnding: string = prebuiltTarget.includes('windows-msvc')
       ? '.zip'
       : '.tar.gz'
 
@@ -73,7 +73,7 @@ async function run(): Promise<void> {
         else throw new Error('Could not install cargo-prebuilt')
       }
 
-      if (prebuiltTarget.includes('windows')) {
+      if (prebuiltTarget.includes('windows-msvc')) {
         directory = await tc.extractZip(prebuiltPath)
       } else {
         directory = await tc.extractTar(prebuiltPath)

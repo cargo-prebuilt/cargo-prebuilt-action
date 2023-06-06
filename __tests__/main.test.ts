@@ -1,8 +1,8 @@
-import {expect, test} from '@jest/globals'
+import {test} from '@jest/globals'
 import * as exec from '@actions/exec'
 
 test('throws invalid number', async () => {
-  const input = parseInt('foo', 10)
+  const _input = parseInt('foo', 10)
 })
 
 test('get tag', async () => {
@@ -10,7 +10,7 @@ test('get tag', async () => {
     'git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git'
   )
 
-  const re = /([0-9]\.[0-9]\.[0.9])/g
+  const re = /([0-9]\.[0-9]\.[0-9])/g
   const tmp = [...out.stdout.matchAll(re)].map(a => {
     return a[0]
   })
@@ -28,4 +28,5 @@ test('get tag', async () => {
     return -1
   })
   console.log(latest[latest.length - 1])
+  console.log(latest[latest.length - 2])
 })
