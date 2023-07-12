@@ -20,9 +20,9 @@ async function run(): Promise<void> {
         'git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git'
       )
 
-      const re = /([0-9]\.[0-9]\.[0-9])/g
+      const re = /v((\d+)\.(\d+)\.(\d+))[^-]/g
       const tmp = [...out.stdout.matchAll(re)].map(a => {
-        return a[0]
+        return a[1]
       })
 
       const latest = tmp.sort((a, b) => {
