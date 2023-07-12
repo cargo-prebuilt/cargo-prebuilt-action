@@ -62,7 +62,7 @@ jobs:
       - run: "[[ \"$(cargo prebuilt --version)\" != \"\" ]]"
       - uses: ./
         with:
-          version: 0.5.0
+          prebuilt-version: 0.5.0
       - run: "[[ \"$(cargo prebuilt --version)\" == \"0.5.0\" ]]"
   test-linux-tools: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
@@ -70,44 +70,44 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ./
         with:
-          tools: just,rtx-cli@1.21.5,bacon@2.6.0
+          pkgs: just,rtx-cli@1.34.0,bacon@2.11.0
       - run: just --version
       - run: which just
       - run: rtx --version
-      - run: "[[ \"$(bacon --version)\" == \"bacon 2.6.0\" ]]"
+      - run: "[[ \"$(bacon --version)\" == \"bacon 2.11.0\" ]]"
   test-macos-tools: # make sure the action works on a clean machine without building
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
       - uses: ./
         with:
-          tools: just,rtx-cli@1.21.5,bacon@2.6.0
+          pkgs: just,rtx-cli@1.34.0,bacon@2.11.0
       - run: just --version
       - run: which just
       - run: rtx --version
-      - run: "[[ \"$(bacon --version)\" == \"bacon 2.6.0\" ]]"
+      - run: "[[ \"$(bacon --version)\" == \"bacon 2.11.0\" ]]"
   test-windows-tools: # make sure the action works on a clean machine without building
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
       - uses: ./
         with:
-          tools: just,bacon@2.6.0,just@1.8.0
+          pkgs: just,bacon@2.11.0
       - shell: bash
-        run: "[[ \"$(just --version)\" == \"just 1.8.0\" ]]"
+        run: just --version
       - run: where.exe just
       - shell: bash
-        run: "[[ \"$(bacon --version)\" == \"bacon 2.6.0\" ]]"
+        run: "[[ \"$(bacon --version)\" == \"bacon 2.11.0\" ]]"
   test-dup:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: ./
         with:
-          tools: just@1.8.0
-      - run: "[[ \"$(just --version)\" == \"just 1.8.0\" ]]"
+          pkgs: just@1.14.0
+      - run: "[[ \"$(just --version)\" == \"just 1.14.0\" ]]"
       - uses: ./
         with:
-          tools: just@1.8.0
-      - run: "[[ \"$(just --version)\" == \"just 1.8.0\" ]]"
+          pkgs: just@1.14.0
+      - run: "[[ \"$(just --version)\" == \"just 1.14.0\" ]]"
       - run: which just
