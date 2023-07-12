@@ -111,7 +111,7 @@ async function run(): Promise<void> {
       if (path !== '') args.push(`--path='${path}'`)
       if (reportPath !== '') args.push(`--report-path='${reportPath}'`)
       if (ci === 'true') args.push('--ci')
-      if (sig === '') args.push(`--sig='${sig}'`)
+      if (sig !== '') args.push(`--sig='${sig}'`)
       if (forceVerify === 'true') args.push('--force-verify')
       if (skipBinHash === 'true') args.push('--skip-bin-hash')
       if (color === 'true') args.push('--color')

@@ -133,7 +133,7 @@ function run() {
                     args.push(`--report-path='${reportPath}'`);
                 if (ci === 'true')
                     args.push('--ci');
-                if (sig === '')
+                if (sig !== '')
                     args.push(`--sig='${sig}'`);
                 if (forceVerify === 'true')
                     args.push('--force-verify');
