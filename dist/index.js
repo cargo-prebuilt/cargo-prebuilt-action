@@ -43,18 +43,25 @@ const core = __importStar(__nccwpck_require__(7733));
 const tc = __importStar(__nccwpck_require__(514));
 const exec = __importStar(__nccwpck_require__(1757));
 const utils_1 = __nccwpck_require__(6548);
+const DL_URL = 'https://github.com/cargo-prebuilt/cargo-prebuilt/releases/download/v';
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let prebuiltVersion = core.getInput('version');
+            let prebuiltVersion = core.getInput('prebuilt-version');
             let fallbackVersion;
-            let prebuiltTarget = core.getInput('target');
-            const prebuiltTools = core.getInput('tools');
-            const prebuiltToolsTarget = core.getInput('tools-target');
-            const prebuiltToolsIndex = core.getInput('tools-index');
-            const prebuiltToolsAuth = core.getInput('tools-auth');
-            const prebuiltToolsPath = core.getInput('tools-path');
-            const prebuiltToolsCI = core.getInput('tools-ci');
+            let prebuiltTarget = core.getInput('prebuilt-target');
+            //    const prebuiltVerify: string = core.getInput('prebuilt-verify')
+            const pkgs = core.getInput('pkgs');
+            const target = core.getInput('target');
+            const index = core.getInput('index');
+            const auth = core.getInput('auth');
+            const path = core.getInput('path');
+            const reportPath = core.getInput('report-path');
+            const ci = core.getInput('ci');
+            const sig = core.getInput('sig');
+            const forceVerify = core.getInput('force-verify');
+            const skipBinHash = core.getInput('skip-bin-hash');
+            const color = core.getInput('color');
             if (prebuiltVersion === 'latest') {
                 const out = yield exec.getExecOutput('git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git');
                 const re = /v((\d+)\.(\d+)\.(\d+))[^-]/g;
@@ -79,25 +86,26 @@ function run() {
             if (prebuiltTarget === 'current') {
                 prebuiltTarget = yield (0, utils_1.currentTarget)();
             }
-            core.setOutput('version', prebuiltVersion);
-            core.setOutput('target', prebuiltTarget);
+            core.setOutput('prebuilt-version', prebuiltVersion);
+            core.setOutput('prebuilt-target', prebuiltTarget);
             const fileEnding = prebuiltTarget.includes('windows-msvc')
                 ? '.zip'
                 : '.tar.gz';
             let directory = tc.find('cargo-prebuilt', prebuiltVersion, prebuiltTarget);
-            core.debug(`Found cargo-prebuilt tool cache at ${directory}`);
+            core.debug(`Found cargo-prebuilt in tool cache at ${directory}`);
             core.addPath(directory);
+            // TODO: Verify downloads?
             if (directory === '') {
                 let prebuiltPath;
                 try {
-                    prebuiltPath = yield tc.downloadTool(`https://github.com/cargo-prebuilt/cargo-prebuilt/releases/download/v${prebuiltVersion}/${prebuiltTarget}${fileEnding}`);
+                    prebuiltPath = yield tc.downloadTool(`${DL_URL}${prebuiltVersion}/${prebuiltTarget}${fileEnding}`);
                 }
                 catch (_a) {
                     core.info('Failed to install main version using fallback version');
                     if (fallbackVersion)
-                        prebuiltPath = yield tc.downloadTool(`https://github.com/cargo-prebuilt/cargo-prebuilt/releases/download/v${fallbackVersion}/${prebuiltTarget}${fileEnding}`);
+                        prebuiltPath = yield tc.downloadTool(`${DL_URL}${fallbackVersion}/${prebuiltTarget}${fileEnding}`);
                     else
-                        throw new Error('Could not install cargo-prebuilt');
+                        throw new Error('Could not install cargo-prebuilt from fallback');
                 }
                 if (prebuiltTarget.includes('windows-msvc')) {
                     directory = yield tc.extractZip(prebuiltPath);
@@ -110,24 +118,37 @@ function run() {
                 core.info('Installed cargo-prebuilt');
             }
             core.debug(`cargo-prebuilt: ${directory}`);
-            if (prebuiltTools !== '') {
-                // Install tools
+            // Install prebuilt crates if needed
+            if (pkgs !== '') {
                 const args = [];
-                if (prebuiltToolsCI === 'true')
+                if (target !== '')
+                    args.push(`--target='${target}'`);
+                if (index !== '')
+                    args.push(`--index='${index}'`);
+                if (auth !== '')
+                    args.push(`--auth='${auth}'`);
+                if (path !== '')
+                    args.push(`--path='${path}'`);
+                if (reportPath !== '')
+                    args.push(`--report-path='${reportPath}'`);
+                if (ci === 'true')
                     args.push('--ci');
-                if (prebuiltToolsTarget !== 'current')
-                    args.push(`--target=${prebuiltToolsTarget}`);
-                if (prebuiltToolsIndex !== '')
-                    args.push(`--index=${prebuiltToolsIndex}`);
-                if (prebuiltToolsAuth !== '')
-                    args.push(`--auth=${prebuiltToolsAuth}`);
-                if (prebuiltToolsPath !== '')
-                    args.push(`--path=${prebuiltToolsPath}`);
-                args.push(prebuiltTools);
-                yield exec.exec(`cargo-prebuilt`, args);
-                if (prebuiltToolsPath !== '')
-                    core.addPath(prebuiltToolsPath);
-                core.debug(`Installed tools ${prebuiltTools}`);
+                if (sig === '')
+                    args.push(`--sig='${sig}'`);
+                if (forceVerify === 'true')
+                    args.push('--force-verify');
+                if (skipBinHash === 'true')
+                    args.push('--skip-bin-hash');
+                if (color === 'true')
+                    args.push('--color');
+                if (color === 'false')
+                    args.push('--no-color');
+                args.push(pkgs);
+                const out = yield exec.getExecOutput('cargo-prebuilt', args);
+                core.setOutput('out', out);
+                if (path !== '')
+                    core.addPath(path);
+                core.debug(`Installed tools ${pkgs}`);
             }
         }
         catch (error) {

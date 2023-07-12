@@ -3,17 +3,27 @@ import * as tc from '@actions/tool-cache'
 import * as exec from '@actions/exec'
 import {currentTarget} from './utils'
 
+const DL_URL =
+  'https://github.com/cargo-prebuilt/cargo-prebuilt/releases/download/v'
+
 async function run(): Promise<void> {
   try {
-    let prebuiltVersion: string = core.getInput('version')
+    let prebuiltVersion: string = core.getInput('prebuilt-version')
     let fallbackVersion: string | undefined
-    let prebuiltTarget: string = core.getInput('target')
-    const prebuiltTools: string = core.getInput('tools')
-    const prebuiltToolsTarget: string = core.getInput('tools-target')
-    const prebuiltToolsIndex: string = core.getInput('tools-index')
-    const prebuiltToolsAuth: string = core.getInput('tools-auth')
-    const prebuiltToolsPath: string = core.getInput('tools-path')
-    const prebuiltToolsCI: string = core.getInput('tools-ci')
+    let prebuiltTarget: string = core.getInput('prebuilt-target')
+    //    const prebuiltVerify: string = core.getInput('prebuilt-verify')
+
+    const pkgs: string = core.getInput('pkgs')
+    const target: string = core.getInput('target')
+    const index: string = core.getInput('index')
+    const auth: string = core.getInput('auth')
+    const path: string = core.getInput('path')
+    const reportPath: string = core.getInput('report-path')
+    const ci: string = core.getInput('ci')
+    const sig: string = core.getInput('sig')
+    const forceVerify: string = core.getInput('force-verify')
+    const skipBinHash: string = core.getInput('skip-bin-hash')
+    const color: string = core.getInput('color')
 
     if (prebuiltVersion === 'latest') {
       const out = await exec.getExecOutput(
@@ -47,30 +57,31 @@ async function run(): Promise<void> {
       prebuiltTarget = await currentTarget()
     }
 
-    core.setOutput('version', prebuiltVersion)
-    core.setOutput('target', prebuiltTarget)
+    core.setOutput('prebuilt-version', prebuiltVersion)
+    core.setOutput('prebuilt-target', prebuiltTarget)
 
     const fileEnding: string = prebuiltTarget.includes('windows-msvc')
       ? '.zip'
       : '.tar.gz'
 
     let directory = tc.find('cargo-prebuilt', prebuiltVersion, prebuiltTarget)
-    core.debug(`Found cargo-prebuilt tool cache at ${directory}`)
+    core.debug(`Found cargo-prebuilt in tool cache at ${directory}`)
     core.addPath(directory)
 
+    // TODO: Verify downloads?
     if (directory === '') {
       let prebuiltPath
       try {
         prebuiltPath = await tc.downloadTool(
-          `https://github.com/cargo-prebuilt/cargo-prebuilt/releases/download/v${prebuiltVersion}/${prebuiltTarget}${fileEnding}`
+          `${DL_URL}${prebuiltVersion}/${prebuiltTarget}${fileEnding}`
         )
       } catch {
         core.info('Failed to install main version using fallback version')
         if (fallbackVersion)
           prebuiltPath = await tc.downloadTool(
-            `https://github.com/cargo-prebuilt/cargo-prebuilt/releases/download/v${fallbackVersion}/${prebuiltTarget}${fileEnding}`
+            `${DL_URL}${fallbackVersion}/${prebuiltTarget}${fileEnding}`
           )
-        else throw new Error('Could not install cargo-prebuilt')
+        else throw new Error('Could not install cargo-prebuilt from fallback')
       }
 
       if (prebuiltTarget.includes('windows-msvc')) {
@@ -91,21 +102,27 @@ async function run(): Promise<void> {
     }
     core.debug(`cargo-prebuilt: ${directory}`)
 
-    if (prebuiltTools !== '') {
-      // Install tools
+    // Install prebuilt crates if needed
+    if (pkgs !== '') {
       const args: string[] = []
-      if (prebuiltToolsCI === 'true') args.push('--ci')
-      if (prebuiltToolsTarget !== 'current')
-        args.push(`--target=${prebuiltToolsTarget}`)
-      if (prebuiltToolsIndex !== '') args.push(`--index=${prebuiltToolsIndex}`)
-      if (prebuiltToolsAuth !== '') args.push(`--auth=${prebuiltToolsAuth}`)
-      if (prebuiltToolsPath !== '') args.push(`--path=${prebuiltToolsPath}`)
-      args.push(prebuiltTools)
+      if (target !== '') args.push(`--target='${target}'`)
+      if (index !== '') args.push(`--index='${index}'`)
+      if (auth !== '') args.push(`--auth='${auth}'`)
+      if (path !== '') args.push(`--path='${path}'`)
+      if (reportPath !== '') args.push(`--report-path='${reportPath}'`)
+      if (ci === 'true') args.push('--ci')
+      if (sig === '') args.push(`--sig='${sig}'`)
+      if (forceVerify === 'true') args.push('--force-verify')
+      if (skipBinHash === 'true') args.push('--skip-bin-hash')
+      if (color === 'true') args.push('--color')
+      if (color === 'false') args.push('--no-color')
+      args.push(pkgs)
 
-      await exec.exec(`cargo-prebuilt`, args)
+      const out = await exec.getExecOutput('cargo-prebuilt', args)
+      core.setOutput('out', out)
 
-      if (prebuiltToolsPath !== '') core.addPath(prebuiltToolsPath)
-      core.debug(`Installed tools ${prebuiltTools}`)
+      if (path !== '') core.addPath(path)
+      core.debug(`Installed tools ${pkgs}`)
     }
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)

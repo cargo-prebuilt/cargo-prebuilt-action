@@ -1,41 +1,62 @@
 name: 'Install cargo-prebuilt'
-description: 'Install cargo prebuilt to a runner'
+description: 'Install cargo prebuilt and crates to a runner'
 author: 'harmless-tech, cargo-prebuilt'
 branding:
   icon: arrow-down-circle
   color: gray-dark
 inputs:
-  version:
+  prebuilt-version:
     required: true
     description: 'Version of cargo-prebuilt to use'
     default: latest
-  target:
+  prebuilt-target:
     required: true
     description: 'Target for the version of cargo-prebuilt to install'
     default: current
-  tools:
-    description: 'A CSV list of tools needed with optional version numbers (see cargo-prebuilt cli)'
+  prebuilt-verify:
+    required: true
+    description: 'Verify downloaded cargo prebuilt'
+    default: 'false'
+  pkgs:
+    description: 'A CSV list of prebuilt crates needed with optional version numbers (see cargo-prebuilt cli)'
     default: ''
-  tools-target:
+  target:
     description: 'Target for the version of the tools to install'
-    default: current
-  tools-index:
+    default: ''
+  index:
     description: 'Index to use to install tools from'
     default: ''
-  tools-auth:
+  auth:
     description: 'Auth token for index if needed'
     default: ''
-  tools-path:
-    description: 'Path where tools are installed'
+  path:
+    description: 'Path where prebuilt crates are installed'
     default: ''
-  tools-ci:
+  report-path:
+    description: 'Path where reports are installed'
+    default: ''
+  ci:
     description: 'Use the --ci flag'
     default: 'true'
+  sig:
+    description: 'A public verifying key encoded as base64'
+    default: ''
+  force-verify:
+    description: 'Verify downloaded files'
+    default: ''
+  skip-bin-hash:
+    description: 'Do not hash extracted binaries'
+    default: ''
+  color:
+    description: 'Enable or disable color'
+    default: ''
 outputs:
-  version:
-    description: 'Version that was installed'
-  target:
-    description: 'Target that was installed'
+  prebuilt-version:
+    description: 'Prebuilt version that was installed'
+  prebuilt-target:
+    description: 'Prebuilt target that was installed'
+  out:
+    description: 'Stdout of cargo-prebuilt if it downloaded any tools'
 runs:
   using: 'node16'
   main: 'dist/index.js'
