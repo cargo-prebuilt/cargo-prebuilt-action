@@ -60,6 +60,7 @@ function run() {
             const ci = core.getInput('ci');
             const sig = core.getInput('sig');
             const forceVerify = core.getInput('force-verify');
+            const safe = core.getInput('safe');
             const skipBinHash = core.getInput('skip-bin-hash');
             const color = core.getInput('color');
             if (prebuiltVersion === 'latest') {
@@ -137,6 +138,8 @@ function run() {
                     args.push(`--sig='${sig}'`);
                 if (forceVerify === 'true')
                     args.push('--force-verify');
+                if (safe === 'true')
+                    args.push('--safe');
                 if (skipBinHash === 'true')
                     args.push('--skip-bin-hash');
                 if (color === 'true')

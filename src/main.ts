@@ -22,6 +22,7 @@ async function run(): Promise<void> {
     const ci: string = core.getInput('ci')
     const sig: string = core.getInput('sig')
     const forceVerify: string = core.getInput('force-verify')
+    const safe: string = core.getInput('safe')
     const skipBinHash: string = core.getInput('skip-bin-hash')
     const color: string = core.getInput('color')
 
@@ -113,6 +114,7 @@ async function run(): Promise<void> {
       if (ci === 'true') args.push('--ci')
       if (sig !== '') args.push(`--sig='${sig}'`)
       if (forceVerify === 'true') args.push('--force-verify')
+      if (safe === 'true') args.push('--safe')
       if (skipBinHash === 'true') args.push('--skip-bin-hash')
       if (color === 'true') args.push('--color')
       if (color === 'false') args.push('--no-color')

@@ -44,6 +44,9 @@ inputs:
   force-verify:
     description: 'Verify downloaded files'
     default: ''
+  safe:
+    description: 'Do not overwrite existing files'
+    default: ''
   skip-bin-hash:
     description: 'Do not hash extracted binaries'
     default: ''
