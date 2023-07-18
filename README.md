@@ -10,19 +10,74 @@ See:
 
 ### Inputs
 
-- version: Defaults to latest
-- target: Defaults to current
-- tools: Defaults to ''
-- tools-target: Defaults to current
-- tools-index: Defaults to ''
-- tools-auth: Defaults to ''
-- tools-path: Defaults to ''
-- tools-ci: Defaults to true
+- ```yaml
+  prebuilt-version: 'Version of cargo-prebuilt to use'
+    default: latest
+  ```
+- ```yaml
+  prebuilt-target: 'Target for the version of cargo-prebuilt to install'
+    default: current
+  ```
+- ```yaml
+  prebuilt-verify: 'Verify downloaded cargo prebuilt'
+    default: false
+  ```
+- ```yaml
+  pkgs: 'A CSV list of prebuilt crates needed with optional version numbers (see cargo-prebuilt cli)'
+    default: 'none'
+  ```
+- ```yaml
+  target: 'Target for the version of the tools to install'
+    default: 'prebuilt-target'
+  ```
+- ```yaml
+  index: 'Index to use to install tools from'
+    default: 'cargo-prebuilt/index'
+  ```
+- ```yaml
+  auth: 'Auth token for index if needed'
+    default: 'none'
+  ```
+- ```yaml
+  path: 'Path where prebuilt crates are installed'
+    default: 'let cargo-prebuilt decide'
+  ```
+- ```yaml
+  report-path: 'Path where reports are installed'
+    default: 'none, disable ci flag to use this'
+  ```
+- ```yaml
+  ci: 'Use the --ci flag (On by default)'
+    default: true
+  ```
+- ```yaml
+  sig: 'A public verifying key encoded as base64'
+    default: 'none, requires index'
+  ```
+- ```yaml
+  no-verify: 'Do not verify downloaded files'
+    default: false
+  ```
+- ```yaml
+  safe: 'Do not overwrite existing files'
+    default: false
+  ```
+- ```yaml
+  color: 'Enable or disable color'
+    default: 'let cargo-prebuilt decide'
+  ```
 
 ### Outputs
 
-- version: version of cargo-prebuilt installed
-- target: target of cargo-prebuilt installed
+- ```yaml
+  prebuilt-version: 'Cargo prebuilt version that was installed'
+  ```
+- ```yaml
+  prebuilt-target: 'Cargo prebuilt target that was installed'
+  ```
+- ```yaml
+  out : 'Stdout of cargo-prebuilt if it downloaded any tools'
+  ```
 
 ### Usage
 
@@ -38,9 +93,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install cargo-prebuilt
-        uses: cargo-prebuilt/cargo-prebuilt-action@v1
+        uses: cargo-prebuilt/cargo-prebuilt-action@v2
         with:
-          tools: just,rtx-cli@1.22.5
+          pkgs: just,rtx-cli@1.34.1
 ```
 or
 ```yaml
@@ -55,12 +110,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install cargo-prebuilt
-        uses: cargo-prebuilt/cargo-prebuilt-action@v1
+        uses: cargo-prebuilt/cargo-prebuilt-action@v2
       - run: cargo prebuilt just
 ```
 
 ```yaml
-name: Install 0.3.0 for aarch64-apple-darwin
+name: Install for aarch64-apple-darwin
 on:
   push:
   pull_request:
@@ -71,8 +126,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install cargo-prebuilt
-        uses: cargo-prebuilt/cargo-prebuilt-action@v1
+        uses: cargo-prebuilt/cargo-prebuilt-action@v2
         with:
-          version: 0.5.1
-          target: aarch64-apple-darwin
+          prebuilt-version: 0.5.3 # Legacy version, may not work with v2 action
+          prebuilt-target: aarch64-apple-darwin
 ```
