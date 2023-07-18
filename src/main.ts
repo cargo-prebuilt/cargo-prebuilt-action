@@ -21,9 +21,8 @@ async function run(): Promise<void> {
     const reportPath: string = core.getInput('report-path')
     const ci: string = core.getInput('ci')
     const sig: string = core.getInput('sig')
-    const forceVerify: string = core.getInput('force-verify')
+    const noVerify: string = core.getInput('no-verify')
     const safe: string = core.getInput('safe')
-    const skipBinHash: string = core.getInput('skip-bin-hash')
     const color: string = core.getInput('color')
 
     if (prebuiltVersion === 'latest') {
@@ -113,9 +112,8 @@ async function run(): Promise<void> {
       if (reportPath !== '') args.push(`--report-path='${reportPath}'`)
       if (ci === 'true') args.push('--ci')
       if (sig !== '') args.push(`--sig='${sig}'`)
-      if (forceVerify === 'true') args.push('--force-verify')
+      if (noVerify === 'true') args.push('--no-verify')
       if (safe === 'true') args.push('--safe')
-      if (skipBinHash === 'true') args.push('--skip-bin-hash')
       if (color === 'true') args.push('--color')
       if (color === 'false') args.push('--no-color')
       args.push(pkgs)

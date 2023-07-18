@@ -36,19 +36,16 @@ inputs:
     description: 'Path where reports are installed'
     default: ''
   ci:
-    description: 'Use the --ci flag'
+    description: 'Use the --ci flag (On by default)'
     default: 'true'
   sig:
     description: 'A public verifying key encoded as base64'
     default: ''
-  force-verify:
-    description: 'Verify downloaded files'
+  no-verify:
+    description: 'Do not verify downloaded files'
     default: ''
   safe:
     description: 'Do not overwrite existing files'
-    default: ''
-  skip-bin-hash:
-    description: 'Do not hash extracted binaries'
     default: ''
   color:
     description: 'Enable or disable color'

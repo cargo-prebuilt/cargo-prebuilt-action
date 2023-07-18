@@ -59,9 +59,8 @@ function run() {
             const reportPath = core.getInput('report-path');
             const ci = core.getInput('ci');
             const sig = core.getInput('sig');
-            const forceVerify = core.getInput('force-verify');
+            const noVerify = core.getInput('no-verify');
             const safe = core.getInput('safe');
-            const skipBinHash = core.getInput('skip-bin-hash');
             const color = core.getInput('color');
             if (prebuiltVersion === 'latest') {
                 const out = yield exec.getExecOutput('git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git');
@@ -136,12 +135,10 @@ function run() {
                     args.push('--ci');
                 if (sig !== '')
                     args.push(`--sig='${sig}'`);
-                if (forceVerify === 'true')
-                    args.push('--force-verify');
+                if (noVerify === 'true')
+                    args.push('--no-verify');
                 if (safe === 'true')
                     args.push('--safe');
-                if (skipBinHash === 'true')
-                    args.push('--skip-bin-hash');
                 if (color === 'true')
                     args.push('--color');
                 if (color === 'false')
