@@ -195,13 +195,13 @@ function currentTarget() {
             switch (node_process_1.arch) {
                 case 'arm':
                     if (node_process_1.platform === 'linux')
-                        resolve('armv7-unknown-linux-gnueabihf');
+                        resolve('armv7-unknown-linux-musleabihf');
                     else
                         throw new Error('unsupported platform');
                     break;
                 case 'arm64':
                     if (node_process_1.platform === 'linux')
-                        resolve('aarch64-unknown-linux-gnu');
+                        resolve('aarch64-unknown-linux-musl');
                     else if (node_process_1.platform === 'darwin')
                         resolve('aarch64-apple-darwin');
                     else
@@ -209,7 +209,7 @@ function currentTarget() {
                     break;
                 case 'x64':
                     if (node_process_1.platform === 'linux')
-                        resolve('x86_64-unknown-linux-gnu');
+                        resolve('x86_64-unknown-linux-musl');
                     else if (node_process_1.platform === 'darwin')
                         resolve('x86_64-apple-darwin');
                     else if (node_process_1.platform === 'win32')

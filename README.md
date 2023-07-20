@@ -22,8 +22,8 @@ See:
   prebuilt-verify: 'Verify downloaded cargo prebuilt'
     options:
       - 'none: Do not verify'
-      - 'sha256: Verify using sha256 hash' # TODO
-      - 'minisign: Verify using minisign (Requires it to be installed and on the PATH)' # TOSO
+      - 'sha256: Verify using sha256 hash' (Default) # TODO
+      - 'minisign: Verify using minisign (Requires it to be installed and on the PATH)' # TODO
     default: 'none'
   ```
 - ```yaml

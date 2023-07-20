@@ -4,16 +4,16 @@ export async function currentTarget(): Promise<string> {
   return new Promise(resolve => {
     switch (arch) {
       case 'arm':
-        if (platform === 'linux') resolve('armv7-unknown-linux-gnueabihf')
+        if (platform === 'linux') resolve('armv7-unknown-linux-musleabihf')
         else throw new Error('unsupported platform')
         break
       case 'arm64':
-        if (platform === 'linux') resolve('aarch64-unknown-linux-gnu')
+        if (platform === 'linux') resolve('aarch64-unknown-linux-musl')
         else if (platform === 'darwin') resolve('aarch64-apple-darwin')
         else throw new Error('unsupported platform')
         break
       case 'x64':
-        if (platform === 'linux') resolve('x86_64-unknown-linux-gnu')
+        if (platform === 'linux') resolve('x86_64-unknown-linux-musl')
         else if (platform === 'darwin') resolve('x86_64-apple-darwin')
         else if (platform === 'win32') resolve('x86_64-pc-windows-msvc')
         else if (platform === 'freebsd') resolve('x86_64-unknown-freebsd')
