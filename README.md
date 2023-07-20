@@ -35,11 +35,19 @@ See:
     default: 'prebuilt-target'
   ```
 - ```yaml
+  index-key: 'Index to use from the config file. Requires ci to be set to false if using'
+    default: 'none'
+  ```
+- ```yaml
   index: 'Index to use to install tools from'
     default: 'cargo-prebuilt/index'
   ```
 - ```yaml
   auth: 'Auth token for index if needed'
+    default: 'none'
+  ```
+- ```yaml
+  config: 'Path to config file to use. Requires ci to be set to false if using'
     default: 'none'
   ```
 - ```yaml
@@ -51,7 +59,7 @@ See:
     default: 'none, disable ci flag to use this'
   ```
 - ```yaml
-  ci: 'Use the --ci flag (On by default)'
+  ci: 'Use the --ci flag'
     default: true
   ```
 - ```yaml
@@ -65,6 +73,10 @@ See:
 - ```yaml
   safe: 'Do not overwrite existing files'
     default: false
+  ```
+- ```yaml
+  out: 'Print out events'
+    default: true
   ```
 - ```yaml
   color: 'Enable or disable color'

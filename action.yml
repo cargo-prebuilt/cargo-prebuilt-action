@@ -23,11 +23,17 @@ inputs:
   target:
     description: 'Target for the version of the tools to install'
     default: ''
+  index-key:
+    description: 'Index to use from the config file. Requires ci to be set to false if using'
+    default: ''
   index:
     description: 'Index to use to install tools from'
     default: ''
   auth:
     description: 'Auth token for index if needed'
+    default: ''
+  config:
+    description: 'Path to config file to use. Requires ci to be set to false if using'
     default: ''
   path:
     description: 'Path where prebuilt crates are installed'
@@ -47,6 +53,9 @@ inputs:
   safe:
     description: 'Do not overwrite existing files'
     default: ''
+  out:
+    description: 'Print out events (On by default)'
+    default: 'true'
   color:
     description: 'Enable or disable color'
     default: ''

@@ -54,19 +54,22 @@ function run() {
             //    const prebuiltVerify: string = core.getInput('prebuilt-verify')
             const pkgs = core.getInput('pkgs');
             const target = core.getInput('target');
+            const indexKey = core.getInput('index-key');
             const index = core.getInput('index');
             const auth = core.getInput('auth');
+            const config = core.getInput('config');
             const path = core.getInput('path');
             const reportPath = core.getInput('report-path');
             const ci = core.getInput('ci');
             const sig = core.getInput('sig');
             const noVerify = core.getInput('no-verify');
             const safe = core.getInput('safe');
+            const out = core.getInput('out');
             const color = core.getInput('color');
             if (prebuiltVersion === 'latest') {
-                const out = yield exec.getExecOutput('git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git');
+                const output = yield exec.getExecOutput('git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git');
                 const re = /v((\d+)\.(\d+)\.(\d+))[^-]/g;
-                const tmp = [...out.stdout.matchAll(re)].map(a => {
+                const tmp = [...output.stdout.matchAll(re)].map(a => {
                     return a[1];
                 });
                 const latest = tmp.sort((a, b) => {
@@ -124,10 +127,14 @@ function run() {
                 const args = [];
                 if (target !== '')
                     args.push(`--target='${target}'`);
+                if (indexKey !== '')
+                    args.push(`--index-key='${indexKey}'`);
                 if (index !== '')
                     args.push(`--index='${index}'`);
                 if (auth !== '')
                     args.push(`--auth='${auth}'`);
+                if (config !== '')
+                    args.push(`--config='${config}'`);
                 if (path !== '')
                     args.push(`--path='${path}'`);
                 if (reportPath !== '')
@@ -140,13 +147,15 @@ function run() {
                     args.push('--no-verify');
                 if (safe === 'true')
                     args.push('--safe');
+                if (out === 'true')
+                    args.push('--out');
                 if (color === 'true')
                     args.push('--color');
                 if (color === 'false')
                     args.push('--no-color');
                 args.push(pkgs);
-                const out = yield exec.getExecOutput('cargo-prebuilt', args);
-                core.setOutput('out', out);
+                const output = yield exec.getExecOutput('cargo-prebuilt', args);
+                core.setOutput('out', output);
                 if (path !== '')
                     core.addPath(path);
                 core.debug(`Installed tools ${pkgs}`);

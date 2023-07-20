@@ -17,23 +17,26 @@ async function run(): Promise<void> {
 
     const pkgs: string = core.getInput('pkgs')
     const target: string = core.getInput('target')
+    const indexKey: string = core.getInput('index-key')
     const index: string = core.getInput('index')
     const auth: string = core.getInput('auth')
+    const config: string = core.getInput('config')
     const path: string = core.getInput('path')
     const reportPath: string = core.getInput('report-path')
     const ci: string = core.getInput('ci')
     const sig: string = core.getInput('sig')
     const noVerify: string = core.getInput('no-verify')
     const safe: string = core.getInput('safe')
+    const out: string = core.getInput('out')
     const color: string = core.getInput('color')
 
     if (prebuiltVersion === 'latest') {
-      const out = await exec.getExecOutput(
+      const output = await exec.getExecOutput(
         'git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git'
       )
 
       const re = /v((\d+)\.(\d+)\.(\d+))[^-]/g
-      const tmp = [...out.stdout.matchAll(re)].map(a => {
+      const tmp = [...output.stdout.matchAll(re)].map(a => {
         return a[1]
       })
 
@@ -108,20 +111,23 @@ async function run(): Promise<void> {
     if (pkgs !== '') {
       const args: string[] = []
       if (target !== '') args.push(`--target='${target}'`)
+      if (indexKey !== '') args.push(`--index-key='${indexKey}'`)
       if (index !== '') args.push(`--index='${index}'`)
       if (auth !== '') args.push(`--auth='${auth}'`)
+      if (config !== '') args.push(`--config='${config}'`)
       if (path !== '') args.push(`--path='${path}'`)
       if (reportPath !== '') args.push(`--report-path='${reportPath}'`)
       if (ci === 'true') args.push('--ci')
       if (sig !== '') args.push(`--sig='${sig}'`)
       if (noVerify === 'true') args.push('--no-verify')
       if (safe === 'true') args.push('--safe')
+      if (out === 'true') args.push('--out')
       if (color === 'true') args.push('--color')
       if (color === 'false') args.push('--no-color')
       args.push(pkgs)
 
-      const out = await exec.getExecOutput('cargo-prebuilt', args)
-      core.setOutput('out', out)
+      const output = await exec.getExecOutput('cargo-prebuilt', args)
+      core.setOutput('out', output)
 
       if (path !== '') core.addPath(path)
       core.debug(`Installed tools ${pkgs}`)
