@@ -11,6 +11,8 @@ async function run(): Promise<void> {
     let prebuiltVersion: string = core.getInput('prebuilt-version')
     let fallbackVersion: string | undefined
     let prebuiltTarget: string = core.getInput('prebuilt-target')
+
+    // TODO: Add in verify methods.
     //    const prebuiltVerify: string = core.getInput('prebuilt-verify')
 
     const pkgs: string = core.getInput('pkgs')

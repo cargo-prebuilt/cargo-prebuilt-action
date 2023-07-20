@@ -20,7 +20,11 @@ See:
   ```
 - ```yaml
   prebuilt-verify: 'Verify downloaded cargo prebuilt'
-    default: false
+    options:
+      - 'none: Do not verify'
+      - 'sha256: Verify using sha256 hash' # TODO
+      - 'minisign: Verify using minisign (Requires it to be installed and on the PATH)' # TOSO
+    default: 'none'
   ```
 - ```yaml
   pkgs: 'A CSV list of prebuilt crates needed with optional version numbers (see cargo-prebuilt cli)'

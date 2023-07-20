@@ -50,6 +50,7 @@ function run() {
             let prebuiltVersion = core.getInput('prebuilt-version');
             let fallbackVersion;
             let prebuiltTarget = core.getInput('prebuilt-target');
+            // TODO: Add in verify methods.
             //    const prebuiltVerify: string = core.getInput('prebuilt-verify')
             const pkgs = core.getInput('pkgs');
             const target = core.getInput('target');
