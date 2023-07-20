@@ -30,3 +30,12 @@ test('get tag', async () => {
   console.log(latest[latest.length - 1])
   console.log(latest[latest.length - 2])
 })
+
+import {hashFile} from '../src/sha256'
+test('hash', async () => {
+  const hash = await hashFile('./.typos.toml')
+  if (
+    hash != '16d41bab8995c2bebb4d6999bd0cbcc4405963d45a0f8ba301cebbff1fbf5b51'
+  )
+    throw new Error('hashes not equal')
+})

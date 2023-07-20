@@ -16,7 +16,7 @@ inputs:
   prebuilt-verify:
     required: true
     description: 'Verify downloaded cargo prebuilt'
-    default: 'none'
+    default: 'sha256'
   pkgs:
     description: 'A CSV list of prebuilt crates needed with optional version numbers (see cargo-prebuilt cli)'
     default: ''

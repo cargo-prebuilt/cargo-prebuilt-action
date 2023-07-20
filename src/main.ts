@@ -2,18 +2,15 @@ import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as exec from '@actions/exec'
 import {currentTarget} from './utils'
-
-const DL_URL =
-  'https://github.com/cargo-prebuilt/cargo-prebuilt/releases/download/v'
+import {DL_URL} from './vals'
+import {verifyFileHash} from './sha256'
 
 async function run(): Promise<void> {
   try {
     let prebuiltVersion: string = core.getInput('prebuilt-version')
     let fallbackVersion: string | undefined
     let prebuiltTarget: string = core.getInput('prebuilt-target')
-
-    // TODO: Add in verify methods.
-    //    const prebuiltVerify: string = core.getInput('prebuilt-verify')
+    const prebuiltVerify: string = core.getInput('prebuilt-verify')
 
     const pkgs: string = core.getInput('pkgs')
     const target: string = core.getInput('target')
@@ -73,22 +70,33 @@ async function run(): Promise<void> {
     core.debug(`Found cargo-prebuilt in tool cache at ${directory}`)
     core.addPath(directory)
 
-    // TODO: Verify downloads?
     if (directory === '') {
-      let prebuiltPath
+      let prebuiltPath: string
+
+      // Download
       try {
         prebuiltPath = await tc.downloadTool(
           `${DL_URL}${prebuiltVersion}/${prebuiltTarget}${fileEnding}`
         )
       } catch {
-        core.info('Failed to install main version using fallback version')
-        if (fallbackVersion)
+        core.warning('Failed to install main version using fallback version')
+        if (fallbackVersion) {
+          prebuiltVersion = fallbackVersion
           prebuiltPath = await tc.downloadTool(
-            `${DL_URL}${fallbackVersion}/${prebuiltTarget}${fileEnding}`
+            `${DL_URL}${prebuiltVersion}/${prebuiltTarget}${fileEnding}`
           )
-        else throw new Error('Could not install cargo-prebuilt from fallback')
+        } else throw new Error('Could not install cargo-prebuilt from fallback')
       }
 
+      // Verify file
+      if (prebuiltVerify === 'sha256')
+        await verifyFileHash(prebuiltVersion, prebuiltPath)
+      else if (prebuiltVerify === 'minisign') throw new Error('not implemented')
+      // eslint-disable-next-line no-empty
+      else if (prebuiltVerify === 'none') {
+      } else throw new Error('invalid prebuilt-verify type')
+
+      // Extract
       if (prebuiltTarget.includes('windows-msvc')) {
         directory = await tc.extractZip(prebuiltPath)
       } else {

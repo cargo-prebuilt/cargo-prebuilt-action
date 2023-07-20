@@ -22,9 +22,9 @@ See:
   prebuilt-verify: 'Verify downloaded cargo prebuilt'
     options:
       - 'none: Do not verify'
-      - 'sha256: Verify using sha256 hash' (Default) # TODO
+      - 'sha256: Verify using sha256 hash'
       - 'minisign: Verify using minisign (Requires it to be installed and on the PATH)' # TODO
-    default: 'none'
+    default: 'sha256'
   ```
 - ```yaml
   pkgs: 'A CSV list of prebuilt crates needed with optional version numbers (see cargo-prebuilt cli)'

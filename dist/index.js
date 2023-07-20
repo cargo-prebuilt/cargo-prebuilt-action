@@ -43,15 +43,15 @@ const core = __importStar(__nccwpck_require__(7733));
 const tc = __importStar(__nccwpck_require__(514));
 const exec = __importStar(__nccwpck_require__(1757));
 const utils_1 = __nccwpck_require__(6548);
-const DL_URL = 'https://github.com/cargo-prebuilt/cargo-prebuilt/releases/download/v';
+const vals_1 = __nccwpck_require__(8117);
+const sha256_1 = __nccwpck_require__(2723);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             let prebuiltVersion = core.getInput('prebuilt-version');
             let fallbackVersion;
             let prebuiltTarget = core.getInput('prebuilt-target');
-            // TODO: Add in verify methods.
-            //    const prebuiltVerify: string = core.getInput('prebuilt-verify')
+            const prebuiltVerify = core.getInput('prebuilt-verify');
             const pkgs = core.getInput('pkgs');
             const target = core.getInput('target');
             const indexKey = core.getInput('index-key');
@@ -98,19 +98,32 @@ function run() {
             let directory = tc.find('cargo-prebuilt', prebuiltVersion, prebuiltTarget);
             core.debug(`Found cargo-prebuilt in tool cache at ${directory}`);
             core.addPath(directory);
-            // TODO: Verify downloads?
             if (directory === '') {
                 let prebuiltPath;
+                // Download
                 try {
-                    prebuiltPath = yield tc.downloadTool(`${DL_URL}${prebuiltVersion}/${prebuiltTarget}${fileEnding}`);
+                    prebuiltPath = yield tc.downloadTool(`${vals_1.DL_URL}${prebuiltVersion}/${prebuiltTarget}${fileEnding}`);
                 }
                 catch (_a) {
-                    core.info('Failed to install main version using fallback version');
-                    if (fallbackVersion)
-                        prebuiltPath = yield tc.downloadTool(`${DL_URL}${fallbackVersion}/${prebuiltTarget}${fileEnding}`);
+                    core.warning('Failed to install main version using fallback version');
+                    if (fallbackVersion) {
+                        prebuiltVersion = fallbackVersion;
+                        prebuiltPath = yield tc.downloadTool(`${vals_1.DL_URL}${prebuiltVersion}/${prebuiltTarget}${fileEnding}`);
+                    }
                     else
                         throw new Error('Could not install cargo-prebuilt from fallback');
                 }
+                // Verify file
+                if (prebuiltVerify === 'sha256')
+                    yield (0, sha256_1.verifyFileHash)(prebuiltVersion, prebuiltPath);
+                else if (prebuiltVerify === 'minisign')
+                    throw new Error('not implemented');
+                // eslint-disable-next-line no-empty
+                else if (prebuiltVerify === 'none') {
+                }
+                else
+                    throw new Error('invalid prebuilt-verify type');
+                // Extract
                 if (prebuiltTarget.includes('windows-msvc')) {
                     directory = yield tc.extractZip(prebuiltPath);
                 }
@@ -168,6 +181,52 @@ function run() {
     });
 }
 run();
+
+
+/***/ }),
+
+/***/ 2723:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.hashFile = exports.verifyFileHash = void 0;
+const node_fs_1 = __nccwpck_require__(7561);
+const node_crypto_1 = __nccwpck_require__(6005);
+const vals_1 = __nccwpck_require__(8117);
+function verifyFileHash(version, filePath) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            const sha256File = yield (yield fetch(`${vals_1.DL_URL}${version}/hashes.sha256`)).text();
+            const fileHash = yield hashFile(filePath);
+            // This is probably fine, but maybe this should be change later
+            if (!sha256File.includes(fileHash))
+                throw new Error('sha256 hash does not match');
+            resolve();
+        }));
+    });
+}
+exports.verifyFileHash = verifyFileHash;
+function hashFile(filePath) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise(resolve => {
+            const fd = (0, node_fs_1.readFileSync)(filePath);
+            const hash = (0, node_crypto_1.createHash)('sha256').update(fd).digest('hex');
+            resolve(hash);
+        });
+    });
+}
+exports.hashFile = hashFile;
 
 
 /***/ }),
@@ -233,6 +292,18 @@ function currentTarget() {
     });
 }
 exports.currentTarget = currentTarget;
+
+
+/***/ }),
+
+/***/ 8117:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.DL_URL = void 0;
+exports.DL_URL = 'https://github.com/cargo-prebuilt/cargo-prebuilt/releases/download/v';
 
 
 /***/ }),
@@ -6862,6 +6933,22 @@ module.exports = require("https");
 
 "use strict";
 module.exports = require("net");
+
+/***/ }),
+
+/***/ 6005:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:crypto");
+
+/***/ }),
+
+/***/ 7561:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:fs");
 
 /***/ }),
 
