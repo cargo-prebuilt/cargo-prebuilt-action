@@ -114,8 +114,10 @@ function run() {
                         throw new Error('Could not install cargo-prebuilt from fallback');
                 }
                 // Verify file
-                if (prebuiltVerify === 'sha256')
+                if (prebuiltVerify === 'sha256') {
                     yield (0, sha256_1.verifyFileHash)(prebuiltVersion, prebuiltPath);
+                    core.info('Verified downloaded archive with sha256 hash');
+                }
                 else if (prebuiltVerify === 'minisign')
                     throw new Error('not implemented');
                 // eslint-disable-next-line no-empty
@@ -190,6 +192,29 @@ run();
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -201,13 +226,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.hashFile = exports.verifyFileHash = void 0;
+const httpm = __importStar(__nccwpck_require__(7794));
 const node_fs_1 = __nccwpck_require__(7561);
 const node_crypto_1 = __nccwpck_require__(6005);
 const vals_1 = __nccwpck_require__(8117);
 function verifyFileHash(version, filePath) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            const sha256File = yield (yield fetch(`${vals_1.DL_URL}${version}/hashes.sha256`)).text();
+            const client = new httpm.HttpClient('sha256 downloader');
+            const res = yield client.get(`${vals_1.DL_URL}${version}/hashes.sha256`);
+            const sha256File = yield res.readBody();
             const fileHash = yield hashFile(filePath);
             // This is probably fine, but maybe this should be change later
             if (!sha256File.includes(fileHash))

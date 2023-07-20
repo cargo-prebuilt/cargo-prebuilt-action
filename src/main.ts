@@ -89,9 +89,11 @@ async function run(): Promise<void> {
       }
 
       // Verify file
-      if (prebuiltVerify === 'sha256')
+      if (prebuiltVerify === 'sha256') {
         await verifyFileHash(prebuiltVersion, prebuiltPath)
-      else if (prebuiltVerify === 'minisign') throw new Error('not implemented')
+        core.info('Verified downloaded archive with sha256 hash')
+      } else if (prebuiltVerify === 'minisign')
+        throw new Error('not implemented')
       // eslint-disable-next-line no-empty
       else if (prebuiltVerify === 'none') {
       } else throw new Error('invalid prebuilt-verify type')
