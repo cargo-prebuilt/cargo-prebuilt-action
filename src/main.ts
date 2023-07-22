@@ -134,7 +134,7 @@ async function run(): Promise<void> {
       if (out === 'true') args.push('--out')
       if (color === 'true') args.push('--color')
       if (color === 'false') args.push('--no-color')
-      args.push(`'${pkgs}'`)
+      args.push(pkgs)
 
       const output = await exec.getExecOutput('cargo-prebuilt', args)
       core.setOutput('out', output)
