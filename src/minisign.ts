@@ -29,6 +29,8 @@ export async function verifyFileMinisign(
     writeFileSync(minisignFilePath, minisignFile)
 
     await exec.exec(rsign2, [
+      'verify',
+      `'${filePath}'`,
       '-P',
       `'${PUB_KEY}'`,
       '-x',

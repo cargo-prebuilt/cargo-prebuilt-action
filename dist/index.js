@@ -254,6 +254,8 @@ function verifyFileMinisign(version, fileName, filePath) {
             const minisignFilePath = `${archivePath}/${fileName}.minisig`;
             (0, node_fs_1.writeFileSync)(minisignFilePath, minisignFile);
             yield exec.exec(rsign2, [
+                'verify',
+                `'${filePath}'`,
                 '-P',
                 `'${PUB_KEY}'`,
                 '-x',
