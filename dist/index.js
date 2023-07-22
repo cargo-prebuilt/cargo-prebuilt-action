@@ -255,11 +255,11 @@ function verifyFileMinisign(version, fileName, filePath) {
             (0, node_fs_1.writeFileSync)(minisignFilePath, minisignFile);
             yield exec.exec(rsign2, [
                 'verify',
-                `'${filePath}'`,
+                `${filePath}`,
                 '-P',
                 `${PUB_KEY}`,
                 '-x',
-                `'${minisignFilePath}'`
+                `${minisignFilePath}`
             ]);
             resolve();
         }));

@@ -30,11 +30,11 @@ export async function verifyFileMinisign(
 
     await exec.exec(rsign2, [
       'verify',
-      `'${filePath}'`,
+      `${filePath}`,
       '-P',
       `${PUB_KEY}`,
       '-x',
-      `'${minisignFilePath}'`
+      `${minisignFilePath}`
     ])
 
     resolve()
