@@ -168,7 +168,7 @@ function run() {
                     args.push('--color');
                 if (color === 'false')
                     args.push('--no-color');
-                args.push(pkgs);
+                args.push(`'${pkgs}'`);
                 const output = yield exec.getExecOutput('cargo-prebuilt', args);
                 core.setOutput('out', output);
                 if (path !== '')
