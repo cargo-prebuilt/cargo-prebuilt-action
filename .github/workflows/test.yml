@@ -63,7 +63,7 @@ jobs:
       - uses: ./
         with:
           prebuilt-version: 0.6.0
-      - run: "[[ \"$(cargo prebuilt --version)\" == \"0.6.0\" ]]"
+      - run: "[[ \"$(cargo prebuilt --version)\" == \"Version: 0.6.0\" ]]"
   test-linux-tools: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
     steps:
