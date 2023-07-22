@@ -112,3 +112,11 @@ jobs:
           pkgs: just@1.14.0
       - run: "[[ \"$(just --version)\" == \"just 1.14.0\" ]]"
       - run: which just
+  test-minisign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./
+        with:
+          prebuilt-verify: minisign
+          pkgs: just@1.14.0

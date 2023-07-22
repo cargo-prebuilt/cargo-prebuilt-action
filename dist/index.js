@@ -45,6 +45,7 @@ const exec = __importStar(__nccwpck_require__(1757));
 const utils_1 = __nccwpck_require__(6548);
 const vals_1 = __nccwpck_require__(8117);
 const sha256_1 = __nccwpck_require__(2723);
+const minisign_1 = __nccwpck_require__(7209);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -118,8 +119,10 @@ function run() {
                     yield (0, sha256_1.verifyFileHash)(prebuiltVersion, prebuiltPath);
                     core.info('Verified downloaded archive with sha256 hash');
                 }
-                else if (prebuiltVerify === 'minisign')
-                    throw new Error('not implemented');
+                else if (prebuiltVerify === 'minisign') {
+                    yield (0, minisign_1.verifyFileMinisign)(prebuiltVersion, `${prebuiltTarget}${fileEnding}`, prebuiltPath);
+                    core.info('Verified downloaded archive with minisign');
+                }
                 // eslint-disable-next-line no-empty
                 else if (prebuiltVerify === 'none') {
                 }
@@ -183,6 +186,164 @@ function run() {
     });
 }
 run();
+
+
+/***/ }),
+
+/***/ 7209:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.verifyFileMinisign = void 0;
+const core = __importStar(__nccwpck_require__(7733));
+const exec = __importStar(__nccwpck_require__(1757));
+const tc = __importStar(__nccwpck_require__(514));
+const httpm = __importStar(__nccwpck_require__(7794));
+const node_process_1 = __nccwpck_require__(7742);
+const sha256_1 = __nccwpck_require__(2723);
+const vals_1 = __nccwpck_require__(8117);
+const node_path_1 = __importDefault(__nccwpck_require__(9411));
+const node_fs_1 = __nccwpck_require__(7561);
+const DL = 'https://github.com/cargo-prebuilt/index/releases/download/rsign2-0.6.3/';
+const PUB_KEY = 'RWTSqAR1Hbfu6mBFiaz4hb9I9gikhMmvKkVbyz4SJF/oxJcbbScmCqqO';
+function verifyFileMinisign(version, fileName, filePath) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            const rsign2 = yield installRsign2();
+            const archivePath = node_path_1.default.dirname(filePath);
+            const client = new httpm.HttpClient('minisign downloader');
+            const res = yield client.get(`${vals_1.DL_URL}${version}/${fileName}`);
+            const minisignFile = yield res.readBody();
+            const minisignFilePath = `${archivePath}/${fileName}.minisig`;
+            (0, node_fs_1.writeFileSync)(minisignFilePath, minisignFile);
+            yield exec.exec(rsign2, [
+                '-P',
+                `'${PUB_KEY}'`,
+                '-x',
+                `'${minisignFilePath}'`
+            ]);
+            resolve();
+        }));
+    });
+}
+exports.verifyFileMinisign = verifyFileMinisign;
+function installRsign2() {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            let dlFile;
+            let dlHash;
+            switch (node_process_1.arch) {
+                case 'arm':
+                    if (node_process_1.platform === 'linux') {
+                        dlFile = 'armv7-unknown-linux-musleabihf';
+                        dlHash =
+                            '2a187ff785d0520ecdd14af4fb0834d0cdb90d41fa42470413ba6f8187e5142b';
+                    }
+                    else
+                        throw new Error('unsupported platform');
+                    break;
+                case 'arm64':
+                    if (node_process_1.platform === 'linux') {
+                        dlFile = 'aarch64-unknown-linux-musl';
+                        dlHash =
+                            '18803b59a0c4baa9b3d5c7a26a5e6336df9c5ff04c851944ffafa87e111ae026';
+                    }
+                    else if (node_process_1.platform === 'darwin') {
+                        dlFile = 'aarch64-apple-darwin';
+                        dlHash =
+                            'e5770f96ad51aab5a35e595462283ae521f3fd995158c82f220d28b498802cf0';
+                    }
+                    else
+                        throw new Error('unsupported platform');
+                    break;
+                case 'x64':
+                    if (node_process_1.platform === 'linux') {
+                        dlFile = 'x86_64-unknown-linux-musl';
+                        dlHash =
+                            'd013658223ba79bd84b2e409ed26f2c533dcb15546071b33eb32b499bade9349';
+                    }
+                    else if (node_process_1.platform === 'darwin') {
+                        dlFile = 'x86_64-apple-darwin';
+                        dlHash =
+                            'cf3a305a760beb7245b564dee4b180198542f63aef2f954e1f9f3f732a7cf6d0';
+                    }
+                    else if (node_process_1.platform === 'win32') {
+                        dlFile = 'x86_64-pc-windows-msvc';
+                        dlHash =
+                            '8e77f7f2f01413cc2ef767fd2adac04ef4972749625dc29a4ee09a014895ee4d';
+                    }
+                    else if (node_process_1.platform === 'freebsd') {
+                        dlFile = 'x86_64-unknown-freebsd';
+                        dlHash =
+                            '4e32038f9acece4996be3671e709b9d188d7e7464c3c13954ee12298244bd884';
+                    }
+                    else if (node_process_1.platform === 'sunos') {
+                        dlFile = 'x86_64-sun-solaris';
+                        dlHash =
+                            '54abb8a9dee8d7562beefffeede9edf691677437d34293572d884f2aa0fd68e0';
+                    }
+                    else
+                        throw new Error('unsupported platform');
+                    break;
+                case 's390x':
+                    if (node_process_1.platform === 'linux') {
+                        dlFile = 's390x-unknown-linux-gnu';
+                        dlHash =
+                            '73c4a77aef2bace5a9ea1471348203c26e2c8bb869d587f7376ddff31063b8ad';
+                    }
+                    else
+                        throw new Error('unsupported platform');
+                    break;
+            }
+            if (!dlFile)
+                throw new Error('unsupported or missing platform');
+            const toolPath = yield tc.downloadTool(`${DL}${dlFile}.tar.gz`);
+            const hash = yield (0, sha256_1.hashFile)(toolPath);
+            if (hash !== dlHash)
+                throw new Error('sha256 hash does not match for rsign2');
+            const directory = yield tc.extractTar(toolPath);
+            core.info('Installed rsign2');
+            resolve(`${directory}/rsign`);
+        }));
+    });
+}
 
 
 /***/ }),
@@ -6977,6 +7138,14 @@ module.exports = require("node:crypto");
 
 "use strict";
 module.exports = require("node:fs");
+
+/***/ }),
+
+/***/ 9411:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:path");
 
 /***/ }),
 

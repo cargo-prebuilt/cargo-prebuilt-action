@@ -4,6 +4,7 @@ import * as exec from '@actions/exec'
 import {currentTarget} from './utils'
 import {DL_URL} from './vals'
 import {verifyFileHash} from './sha256'
+import {verifyFileMinisign} from './minisign'
 
 async function run(): Promise<void> {
   try {
@@ -92,8 +93,14 @@ async function run(): Promise<void> {
       if (prebuiltVerify === 'sha256') {
         await verifyFileHash(prebuiltVersion, prebuiltPath)
         core.info('Verified downloaded archive with sha256 hash')
-      } else if (prebuiltVerify === 'minisign')
-        throw new Error('not implemented')
+      } else if (prebuiltVerify === 'minisign') {
+        await verifyFileMinisign(
+          prebuiltVersion,
+          `${prebuiltTarget}${fileEnding}`,
+          prebuiltPath
+        )
+        core.info('Verified downloaded archive with minisign')
+      }
       // eslint-disable-next-line no-empty
       else if (prebuiltVerify === 'none') {
       } else throw new Error('invalid prebuilt-verify type')
