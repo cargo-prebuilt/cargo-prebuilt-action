@@ -32,7 +32,7 @@ export async function verifyFileMinisign(
       'verify',
       `'${filePath}'`,
       '-P',
-      `'${PUB_KEY}'`,
+      `${PUB_KEY}`,
       '-x',
       `'${minisignFilePath}'`
     ])

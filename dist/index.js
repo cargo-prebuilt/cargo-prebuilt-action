@@ -257,7 +257,7 @@ function verifyFileMinisign(version, fileName, filePath) {
                 'verify',
                 `'${filePath}'`,
                 '-P',
-                `'${PUB_KEY}'`,
+                `${PUB_KEY}`,
                 '-x',
                 `'${minisignFilePath}'`
             ]);
