@@ -22,10 +22,8 @@ export async function verifyFileMinisign(
 
     const archivePath = path.dirname(filePath)
     const client = new httpm.HttpClient('minisign downloader')
-    const res = await client.get(`${DL_URL}${version}/${fileName}`)
+    const res = await client.get(`${DL_URL}${version}/${fileName}.minisig`)
     const minisignFile = await res.readBody()
-
-    core.debug(minisignFile)
 
     const minisignFilePath = `${archivePath}/${fileName}.minisig`
     writeFileSync(minisignFilePath, minisignFile)

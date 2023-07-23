@@ -249,9 +249,8 @@ function verifyFileMinisign(version, fileName, filePath) {
             const rsign2 = yield installRsign2();
             const archivePath = node_path_1.default.dirname(filePath);
             const client = new httpm.HttpClient('minisign downloader');
-            const res = yield client.get(`${vals_1.DL_URL}${version}/${fileName}`);
+            const res = yield client.get(`${vals_1.DL_URL}${version}/${fileName}.minisig`);
             const minisignFile = yield res.readBody();
-            core.debug(minisignFile);
             const minisignFilePath = `${archivePath}/${fileName}.minisig`;
             (0, node_fs_1.writeFileSync)(minisignFilePath, minisignFile);
             yield exec.exec(rsign2, [
