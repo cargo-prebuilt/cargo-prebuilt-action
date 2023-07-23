@@ -144,7 +144,7 @@ async function run(): Promise<void> {
       args.push(pkgs)
 
       const output = await exec.getExecOutput('cargo-prebuilt', args)
-      core.setOutput('out', output)
+      core.setOutput('out', output.stdout)
 
       if (path !== '') core.addPath(path)
       core.debug(`Installed tools ${pkgs}`)

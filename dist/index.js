@@ -173,7 +173,7 @@ function run() {
                     args.push('--no-color');
                 args.push(pkgs);
                 const output = yield exec.getExecOutput('cargo-prebuilt', args);
-                core.setOutput('out', output);
+                core.setOutput('out', output.stdout);
                 if (path !== '')
                     core.addPath(path);
                 core.debug(`Installed tools ${pkgs}`);
