@@ -23,7 +23,7 @@ See:
     options:
       - 'none: Do not verify'
       - 'sha256: Verify using sha256 hash (Only for making sure the download is not corrupted)'
-      - 'minisign: Verify using minisign (Using rsign2)' # TODO
+      - 'minisign: Verify using minisign (Using rsign2)'
     default: 'sha256'
   ```
 - ```yaml
