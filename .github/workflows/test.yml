@@ -33,22 +33,16 @@ jobs:
         run: pnpm install
       - run: |
           pnpm run all
-  test-linux: # make sure the action works on a clean machine without building
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./
-      - run: cargo prebuilt just
-      - run: just --version
-  test-macos: # make sure the action works on a clean machine without building
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./
-      - run: cargo prebuilt just
-      - run: just --version
-  test-windows: # make sure the action works on a clean machine without building
-    runs-on: windows-latest
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+          - os: macos-latest
+          - os: windows-latest
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - uses: ./
