@@ -235,7 +235,7 @@ exports.verifyFileMinisign = void 0;
 const core = __importStar(__nccwpck_require__(7733));
 const exec = __importStar(__nccwpck_require__(1757));
 const tc = __importStar(__nccwpck_require__(514));
-const httpm = __importStar(__nccwpck_require__(7794));
+const httpm = __importStar(__nccwpck_require__(4284));
 const node_process_1 = __nccwpck_require__(7742);
 const sha256_1 = __nccwpck_require__(2723);
 const vals_1 = __nccwpck_require__(8117);
@@ -389,7 +389,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.hashFile = exports.verifyFileHash = void 0;
-const httpm = __importStar(__nccwpck_require__(7794));
+const httpm = __importStar(__nccwpck_require__(4284));
 const node_fs_1 = __nccwpck_require__(7561);
 const node_crypto_1 = __nccwpck_require__(6005);
 const vals_1 = __nccwpck_require__(8117);
@@ -1022,8 +1022,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OidcClient = void 0;
-const http_client_1 = __nccwpck_require__(7794);
-const auth_1 = __nccwpck_require__(4610);
+const http_client_1 = __nccwpck_require__(4284);
+const auth_1 = __nccwpck_require__(5479);
 const core_1 = __nccwpck_require__(7733);
 class OidcClient {
     static createHttpClient(allowRetry = true, maxRetry = 10) {
@@ -2227,7 +2227,7 @@ class ExecState extends events.EventEmitter {
 
 /***/ }),
 
-/***/ 4610:
+/***/ 5479:
 /***/ (function(__unused_webpack_module, exports) {
 
 "use strict";
@@ -2315,7 +2315,7 @@ exports.PersonalAccessTokenCredentialHandler = PersonalAccessTokenCredentialHand
 
 /***/ }),
 
-/***/ 7794:
+/***/ 4284:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -2353,7 +2353,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.HttpClient = exports.isHttps = exports.HttpClientResponse = exports.HttpClientError = exports.getProxyUrl = exports.MediaTypes = exports.Headers = exports.HttpCodes = void 0;
 const http = __importStar(__nccwpck_require__(3685));
 const https = __importStar(__nccwpck_require__(5687));
-const pm = __importStar(__nccwpck_require__(1116));
+const pm = __importStar(__nccwpck_require__(2923));
 const tunnel = __importStar(__nccwpck_require__(4249));
 var HttpCodes;
 (function (HttpCodes) {
@@ -2440,6 +2440,19 @@ class HttpClientResponse {
                 });
                 this.message.on('end', () => {
                     resolve(output.toString());
+                });
+            }));
+        });
+    }
+    readBodyBuffer() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+                const chunks = [];
+                this.message.on('data', (chunk) => {
+                    chunks.push(chunk);
+                });
+                this.message.on('end', () => {
+                    resolve(Buffer.concat(chunks));
                 });
             }));
         });
@@ -2927,7 +2940,7 @@ const lowercaseKeys = (obj) => Object.keys(obj).reduce((c, k) => ((c[k.toLowerCa
 
 /***/ }),
 
-/***/ 1116:
+/***/ 2923:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -2948,7 +2961,13 @@ function getProxyUrl(reqUrl) {
         }
     })();
     if (proxyVar) {
-        return new URL(proxyVar);
+        try {
+            return new URL(proxyVar);
+        }
+        catch (_a) {
+            if (!proxyVar.startsWith('http://') && !proxyVar.startsWith('https://'))
+                return new URL(`http://${proxyVar}`);
+        }
     }
     else {
         return undefined;
@@ -3775,7 +3794,7 @@ const fs = __importStar(__nccwpck_require__(7147));
 const mm = __importStar(__nccwpck_require__(2842));
 const os = __importStar(__nccwpck_require__(2037));
 const path = __importStar(__nccwpck_require__(1017));
-const httpm = __importStar(__nccwpck_require__(7794));
+const httpm = __importStar(__nccwpck_require__(4284));
 const semver = __importStar(__nccwpck_require__(1729));
 const stream = __importStar(__nccwpck_require__(2781));
 const util = __importStar(__nccwpck_require__(3837));
