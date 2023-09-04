@@ -67,5 +67,5 @@ outputs:
   out:
     description: 'Stdout of cargo-prebuilt if it downloaded any tools'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
