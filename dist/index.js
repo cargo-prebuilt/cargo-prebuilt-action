@@ -445,21 +445,33 @@ function currentTarget() {
             switch (node_process_1.arch) {
                 case 'arm':
                     if (node_process_1.platform === 'linux')
-                        resolve('armv7-unknown-linux-musleabihf');
+                        resolve('armv7-unknown-linux-gnueabihf');
                     else
                         throw new Error('unsupported platform');
                     break;
                 case 'arm64':
                     if (node_process_1.platform === 'linux')
-                        resolve('aarch64-unknown-linux-musl');
+                        resolve('aarch64-unknown-linux-gnu');
                     else if (node_process_1.platform === 'darwin')
                         resolve('aarch64-apple-darwin');
                     else
                         throw new Error('unsupported platform');
                     break;
+                case 'riscv64':
+                    if (node_process_1.platform === 'linux')
+                        resolve('riscv64gc-unknown-linux-gnu');
+                    else
+                        throw new Error('unsupported platform');
+                    break;
+                case 's390x':
+                    if (node_process_1.platform === 'linux')
+                        resolve('s390x-unknown-linux-gnu');
+                    else
+                        throw new Error('unsupported platform');
+                    break;
                 case 'x64':
                     if (node_process_1.platform === 'linux')
-                        resolve('x86_64-unknown-linux-musl');
+                        resolve('x86_64-unknown-linux-gnu');
                     else if (node_process_1.platform === 'darwin')
                         resolve('x86_64-apple-darwin');
                     else if (node_process_1.platform === 'win32')
@@ -468,12 +480,6 @@ function currentTarget() {
                         resolve('x86_64-unknown-freebsd');
                     else if (node_process_1.platform === 'sunos')
                         resolve('x86_64-sun-solaris');
-                    else
-                        throw new Error('unsupported platform');
-                    break;
-                case 's390x':
-                    if (node_process_1.platform === 'linux')
-                        resolve('s390x-unknown-linux-gnu');
                     else
                         throw new Error('unsupported platform');
                     break;
