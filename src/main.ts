@@ -149,6 +149,8 @@ async function run(): Promise<void> {
       if (path !== '') core.addPath(path)
       core.debug(`Installed tools ${pkgs}`)
     }
+
+    process.exit(0)
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
