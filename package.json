@@ -1,6 +1,6 @@
 {
   "name": "install-cargo-prebuilt-action",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "private": true,
   "description": "Install cargo prebuilt to a runner.",
   "main": "lib/main.js",
