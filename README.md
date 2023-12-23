@@ -107,9 +107,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install cargo-prebuilt
-        uses: cargo-prebuilt/cargo-prebuilt-action@v2
+        uses: cargo-prebuilt/cargo-prebuilt-action@v3
         with:
           pkgs: just,rtx-cli@1.34.1
 ```
@@ -124,9 +124,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install cargo-prebuilt
-        uses: cargo-prebuilt/cargo-prebuilt-action@v2
+        uses: cargo-prebuilt/cargo-prebuilt-action@v3
       - run: cargo prebuilt just
 ```
 
@@ -140,9 +140,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install cargo-prebuilt
-        uses: cargo-prebuilt/cargo-prebuilt-action@v2
+        uses: cargo-prebuilt/cargo-prebuilt-action@v3
         with:
           prebuilt-version: 0.5.3 # Legacy version, may not work with v2 action
           prebuilt-target: aarch64-apple-darwin

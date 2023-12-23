@@ -127,15 +127,15 @@ async function run(): Promise<void> {
     // Install prebuilt crates if needed
     if (pkgs !== '') {
       const args: string[] = []
-      if (target !== '') args.push(`--target='${target}'`)
-      if (indexKey !== '') args.push(`--index-key='${indexKey}'`)
-      if (index !== '') args.push(`--index='${index}'`)
-      if (auth !== '') args.push(`--auth='${auth}'`)
-      if (config !== '') args.push(`--config='${config}'`)
-      if (path !== '') args.push(`--path='${path}'`)
-      if (reportPath !== '') args.push(`--report-path='${reportPath}'`)
+      if (target !== '') args.push(`--target=${target}`)
+      if (indexKey !== '') args.push(`--index-key=${indexKey}`)
+      if (index !== '') args.push(`--index=${index}`)
+      if (auth !== '') args.push(`--auth=${auth}`)
+      if (config !== '') args.push(`--config=${config}`)
+      if (path !== '') args.push(`--path=${path}`)
+      if (reportPath !== '') args.push(`--report-path=${reportPath}`)
       if (ci === 'true') args.push('--ci')
-      if (sig !== '') args.push(`--sig='${sig}'`)
+      if (sig !== '') args.push(`--sig=${sig}`)
       if (noVerify === 'true') args.push('--no-verify')
       if (safe === 'true') args.push('--safe')
       if (out === 'true') args.push('--out')

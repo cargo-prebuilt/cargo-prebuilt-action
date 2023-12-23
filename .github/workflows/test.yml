@@ -121,3 +121,12 @@ jobs:
         with:
           prebuilt-verify: minisign
           pkgs: just@1.14.0
+  test-target:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          pkgs: just,rtx-cli@1.34.0,bacon@2.11.0
+          target: aarch64-unknown-linux-musl
+      - run: which just
