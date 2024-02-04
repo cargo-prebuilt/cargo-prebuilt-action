@@ -22,7 +22,7 @@ jobs:
       - name: Get pnpm store directory
         id: pnpm-cache
         run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Setup pnpm cache
         with:
           path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
@@ -41,6 +41,7 @@ jobs:
         include:
           - os: ubuntu-latest
           - os: macos-latest
+          - os: macos-14
           - os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
@@ -71,6 +72,17 @@ jobs:
       - run: "[[ \"$(bacon --version)\" == \"bacon 2.11.0\" ]]"
   test-macos-tools: # make sure the action works on a clean machine without building
     runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          pkgs: just,rtx-cli@1.34.0,bacon@2.11.0
+      - run: just --version
+      - run: which just
+      - run: rtx --version
+      - run: "[[ \"$(bacon --version)\" == \"bacon 2.11.0\" ]]"
+  test-macos-14-tools: # make sure the action works on a clean machine without building
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
       - uses: ./
@@ -113,6 +125,7 @@ jobs:
         include:
           - os: ubuntu-latest
           - os: macos-latest
+          - os: macos-14
           - os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
