@@ -7,6 +7,9 @@ on: # rebuild any PRs and main branch changes
       - main
       - 'releases/*'
 
+permissions:
+  contents: read
+
 env:
   PNPM_VERSION: latest
 
@@ -16,20 +19,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3
+        name: Install pnpm
         with:
           version: ${{ env.PNPM_VERSION }}
           run_install: false
       - name: Get pnpm store directory
-        id: pnpm-cache
-        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_ENV"
       - uses: actions/cache@v4
         name: Setup pnpm cache
         with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          path: ${{ env.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-      - name: Install Deps
+      - name: Install dependencies
         run: pnpm install
       - run: |
           pnpm run all
@@ -40,7 +44,7 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-          - os: macos-latest
+          - os: macos-13
           - os: macos-14
           - os: windows-latest
     runs-on: ${{ matrix.os }}
@@ -59,7 +63,7 @@ jobs:
         with:
           prebuilt-version: 0.6.0
       - run: "[[ \"$(cargo prebuilt --version)\" == \"Version: 0.6.0\" ]]"
-  test-linux-tools: # make sure the action works on a clean machine without building
+  test-linux-tools:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -70,8 +74,8 @@ jobs:
       - run: which just
       - run: rtx --version
       - run: "[[ \"$(bacon --version)\" == \"bacon 2.11.0\" ]]"
-  test-macos-tools: # make sure the action works on a clean machine without building
-    runs-on: macos-latest
+  test-macos-tools:
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
       - uses: ./
@@ -81,7 +85,7 @@ jobs:
       - run: which just
       - run: rtx --version
       - run: "[[ \"$(bacon --version)\" == \"bacon 2.11.0\" ]]"
-  test-macos-14-tools: # make sure the action works on a clean machine without building
+  test-macos-14-tools:
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
@@ -92,7 +96,7 @@ jobs:
       - run: which just
       - run: rtx --version
       - run: "[[ \"$(bacon --version)\" == \"bacon 2.11.0\" ]]"
-  test-windows-tools: # make sure the action works on a clean machine without building
+  test-windows-tools:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -124,7 +128,7 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-          - os: macos-latest
+          - os: macos-13
           - os: macos-14
           - os: windows-latest
     runs-on: ${{ matrix.os }}

@@ -1,12 +1,12 @@
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as exec from '@actions/exec'
-import {currentTarget} from './utils'
-import {DL_URL} from './vals'
-import {verifyFileHash} from './sha256'
-import {verifyFileMinisign} from './minisign'
+import { currentTarget } from './utils'
+import { DL_URL } from './vals'
+import { verifyFileHash } from './sha256'
+import { verifyFileMinisign } from './minisign'
 
-async function run(): Promise<void> {
+export async function run(): Promise<void> {
   try {
     let prebuiltVersion: string = core.getInput('prebuilt-version')
     let fallbackVersion: string | undefined
@@ -155,5 +155,3 @@ async function run(): Promise<void> {
     if (error instanceof Error) core.setFailed(error.message)
   }
 }
-
-run()

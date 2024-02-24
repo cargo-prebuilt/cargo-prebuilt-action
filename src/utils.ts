@@ -1,4 +1,4 @@
-import {arch, platform} from 'node:process'
+import { arch, platform } from 'node:process'
 
 export async function currentTarget(): Promise<string> {
   return new Promise(resolve => {

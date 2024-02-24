@@ -4,6 +4,7 @@ author: 'harmless-tech, cargo-prebuilt'
 branding:
   icon: arrow-down-circle
   color: gray-dark
+
 inputs:
   prebuilt-version:
     required: true
@@ -24,7 +25,8 @@ inputs:
     description: 'Target for the version of the tools to install'
     default: ''
   index-key:
-    description: 'Index to use from the config file. Requires ci to be set to false if using'
+    description: 'Index to use from the config file. 
+      Requires ci to be set to false if using'
     default: ''
   index:
     description: 'Index to use to install tools from'
@@ -33,7 +35,8 @@ inputs:
     description: 'Auth token for index if needed'
     default: ''
   config:
-    description: 'Path to config file to use. Requires ci to be set to false if using'
+    description: 'Path to config file to use. 
+      Requires ci to be set to false if using'
     default: ''
   path:
     description: 'Path where prebuilt crates are installed'
@@ -66,6 +69,7 @@ outputs:
     description: 'Cargo prebuilt target that was installed'
   out:
     description: 'Stdout of cargo-prebuilt if it downloaded any tools'
+
 runs:
   using: 'node20'
   main: 'dist/index.js'
