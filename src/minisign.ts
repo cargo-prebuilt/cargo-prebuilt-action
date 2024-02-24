@@ -1,16 +1,11 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as tc from '@actions/tool-cache'
-import * as httpm from '@actions/http-client'
 import {arch, platform} from 'node:process'
 import {hashFile} from './sha256'
-import {DL_URL} from './vals'
+import {DL_URL, PREBUILT_INDEX_PUB_KEY, RSIGN_DL_URL} from './vals'
 import path from 'node:path'
 import {writeFileSync} from 'node:fs'
-
-const DL =
-  'https://github.com/cargo-prebuilt/index/releases/download/rsign2-0.6.3/'
-const PUB_KEY = 'RWTSqAR1Hbfu6mBFiaz4hb9I9gikhMmvKkVbyz4SJF/oxJcbbScmCqqO'
 
 export async function verifyFileMinisign(
   version: string,
@@ -20,11 +15,10 @@ export async function verifyFileMinisign(
   return new Promise(async resolve => {
     const rsign2 = await installRsign2()
 
-    const archivePath = path.dirname(filePath)
-    const client = new httpm.HttpClient('minisign downloader')
-    const res = await client.get(`${DL_URL}${version}/${fileName}.minisig`)
-    const minisignFile = await res.readBody()
+    const res = await fetch(`${DL_URL}${version}/${fileName}.minisig`)
+    const minisignFile = (await res.text()).trim()
 
+    const archivePath = path.dirname(filePath)
     const minisignFilePath = `${archivePath}/${fileName}.minisig`
     writeFileSync(minisignFilePath, minisignFile)
 
@@ -32,7 +26,7 @@ export async function verifyFileMinisign(
       'verify',
       `${filePath}`,
       '-P',
-      `${PUB_KEY}`,
+      `${PREBUILT_INDEX_PUB_KEY}`,
       '-x',
       `${minisignFilePath}`
     ])
@@ -99,7 +93,7 @@ async function installRsign2(): Promise<string> {
 
     if (!dlFile) throw new Error('unsupported or missing platform')
 
-    const toolPath = await tc.downloadTool(`${DL}${dlFile}.tar.gz`)
+    const toolPath = await tc.downloadTool(`${RSIGN_DL_URL}${dlFile}.tar.gz`)
     const hash = await hashFile(toolPath)
 
     if (hash !== dlHash)
