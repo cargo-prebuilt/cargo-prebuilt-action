@@ -236,29 +236,25 @@ exports.verifyFileMinisign = void 0;
 const core = __importStar(__nccwpck_require__(9093));
 const exec = __importStar(__nccwpck_require__(7775));
 const tc = __importStar(__nccwpck_require__(5561));
-const httpm = __importStar(__nccwpck_require__(1759));
 const node_process_1 = __nccwpck_require__(7742);
 const sha256_1 = __nccwpck_require__(6664);
 const vals_1 = __nccwpck_require__(2673);
 const node_path_1 = __importDefault(__nccwpck_require__(9411));
 const node_fs_1 = __nccwpck_require__(7561);
-const DL = 'https://github.com/cargo-prebuilt/index/releases/download/rsign2-0.6.3/';
-const PUB_KEY = 'RWTSqAR1Hbfu6mBFiaz4hb9I9gikhMmvKkVbyz4SJF/oxJcbbScmCqqO';
 function verifyFileMinisign(version, fileName, filePath) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
             const rsign2 = yield installRsign2();
+            const res = yield fetch(`${vals_1.DL_URL}${version}/${fileName}.minisig`);
+            const minisignFile = (yield res.text()).trim();
             const archivePath = node_path_1.default.dirname(filePath);
-            const client = new httpm.HttpClient('minisign downloader');
-            const res = yield client.get(`${vals_1.DL_URL}${version}/${fileName}.minisig`);
-            const minisignFile = yield res.readBody();
             const minisignFilePath = `${archivePath}/${fileName}.minisig`;
             (0, node_fs_1.writeFileSync)(minisignFilePath, minisignFile);
             yield exec.exec(rsign2, [
                 'verify',
                 `${filePath}`,
                 '-P',
-                `${PUB_KEY}`,
+                `${vals_1.PREBUILT_INDEX_PUB_KEY}`,
                 '-x',
                 `${minisignFilePath}`
             ]);
@@ -337,7 +333,7 @@ function installRsign2() {
             }
             if (!dlFile)
                 throw new Error('unsupported or missing platform');
-            const toolPath = yield tc.downloadTool(`${DL}${dlFile}.tar.gz`);
+            const toolPath = yield tc.downloadTool(`${vals_1.RSIGN_DL_URL}${dlFile}.tar.gz`);
             const hash = yield (0, sha256_1.hashFile)(toolPath);
             if (hash !== dlHash)
                 throw new Error('sha256 hash does not match for rsign2');
@@ -356,29 +352,6 @@ function installRsign2() {
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -390,16 +363,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.hashFile = exports.verifyFileHash = void 0;
-const httpm = __importStar(__nccwpck_require__(1759));
 const node_fs_1 = __nccwpck_require__(7561);
 const node_crypto_1 = __nccwpck_require__(6005);
 const vals_1 = __nccwpck_require__(2673);
 function verifyFileHash(version, filePath) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            const client = new httpm.HttpClient('sha256 downloader');
-            const res = yield client.get(`${vals_1.DL_URL}${version}/hashes.sha256`);
-            const sha256File = yield res.readBody();
+            const res = yield fetch(`${vals_1.DL_URL}${version}/hashes.sha256`);
+            const sha256File = (yield res.text()).trim();
             const fileHash = yield hashFile(filePath);
             // This is probably fine, but maybe this should be change later
             if (!sha256File.includes(fileHash))
@@ -500,8 +471,10 @@ exports.currentTarget = currentTarget;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.DL_URL = void 0;
+exports.PREBUILT_INDEX_PUB_KEY = exports.RSIGN_DL_URL = exports.DL_URL = void 0;
 exports.DL_URL = 'https://github.com/cargo-prebuilt/cargo-prebuilt/releases/download/v';
+exports.RSIGN_DL_URL = 'https://github.com/cargo-prebuilt/index/releases/download/rsign2-0.6.3/';
+exports.PREBUILT_INDEX_PUB_KEY = 'RWTSqAR1Hbfu6mBFiaz4hb9I9gikhMmvKkVbyz4SJF/oxJcbbScmCqqO';
 
 
 /***/ }),

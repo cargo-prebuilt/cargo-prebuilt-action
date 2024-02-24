@@ -1,4 +1,3 @@
-import * as httpm from '@actions/http-client'
 import {readFileSync} from 'node:fs'
 import {createHash} from 'node:crypto'
 import {DL_URL} from './vals'
@@ -8,9 +7,8 @@ export async function verifyFileHash(
   filePath: string
 ): Promise<void> {
   return new Promise(async resolve => {
-    const client = new httpm.HttpClient('sha256 downloader')
-    const res = await client.get(`${DL_URL}${version}/hashes.sha256`)
-    const sha256File = await res.readBody()
+    const res = await fetch(`${DL_URL}${version}/hashes.sha256`)
+    const sha256File = (await res.text()).trim()
 
     const fileHash = await hashFile(filePath)
 
