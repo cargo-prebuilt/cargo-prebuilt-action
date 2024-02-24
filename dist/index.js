@@ -1,483 +1,5 @@
-require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
+/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
-
-/***/ 4234:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core = __importStar(__nccwpck_require__(9093));
-const tc = __importStar(__nccwpck_require__(5561));
-const exec = __importStar(__nccwpck_require__(7775));
-const utils_1 = __nccwpck_require__(933);
-const vals_1 = __nccwpck_require__(2673);
-const sha256_1 = __nccwpck_require__(6664);
-const minisign_1 = __nccwpck_require__(5433);
-function run() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            let prebuiltVersion = core.getInput('prebuilt-version');
-            let fallbackVersion;
-            let prebuiltTarget = core.getInput('prebuilt-target');
-            const prebuiltVerify = core.getInput('prebuilt-verify');
-            const pkgs = core.getInput('pkgs');
-            const target = core.getInput('target');
-            const indexKey = core.getInput('index-key');
-            const index = core.getInput('index');
-            const auth = core.getInput('auth');
-            const config = core.getInput('config');
-            const path = core.getInput('path');
-            const reportPath = core.getInput('report-path');
-            const ci = core.getInput('ci');
-            const sig = core.getInput('sig');
-            const noVerify = core.getInput('no-verify');
-            const safe = core.getInput('safe');
-            const out = core.getInput('out');
-            const color = core.getInput('color');
-            if (prebuiltVersion === 'latest') {
-                const output = yield exec.getExecOutput('git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git');
-                const re = /v((\d+)\.(\d+)\.(\d+))[^-]/g;
-                const tmp = [...output.stdout.matchAll(re)].map(a => {
-                    return a[1];
-                });
-                const latest = tmp.sort((a, b) => {
-                    if (a === b)
-                        return 0;
-                    const as = a.split('.');
-                    const bs = b.split('.');
-                    if (as[0] > bs[0] ||
-                        (as[0] === bs[0] && as[1] > bs[1]) ||
-                        (as[0] === bs[0] && as[1] === bs[1] && as[2] > bs[2]))
-                        return 1;
-                    return -1;
-                });
-                prebuiltVersion = latest[latest.length - 1];
-                fallbackVersion = latest[latest.length - 2];
-                core.info(`Picked cargo-prebuilt version ${prebuiltVersion} with fallback version ${fallbackVersion}`);
-            }
-            if (prebuiltTarget === 'current') {
-                prebuiltTarget = yield (0, utils_1.currentTarget)();
-            }
-            core.setOutput('prebuilt-version', prebuiltVersion);
-            core.setOutput('prebuilt-target', prebuiltTarget);
-            const fileEnding = prebuiltTarget.includes('windows-msvc')
-                ? '.zip'
-                : '.tar.gz';
-            let directory = tc.find('cargo-prebuilt', prebuiltVersion, prebuiltTarget);
-            core.debug(`Found cargo-prebuilt in tool cache at ${directory}`);
-            core.addPath(directory);
-            if (directory === '') {
-                let prebuiltPath;
-                // Download
-                try {
-                    prebuiltPath = yield tc.downloadTool(`${vals_1.DL_URL}${prebuiltVersion}/${prebuiltTarget}${fileEnding}`);
-                }
-                catch (_a) {
-                    core.warning('Failed to install main version using fallback version');
-                    if (fallbackVersion) {
-                        prebuiltVersion = fallbackVersion;
-                        prebuiltPath = yield tc.downloadTool(`${vals_1.DL_URL}${prebuiltVersion}/${prebuiltTarget}${fileEnding}`);
-                    }
-                    else
-                        throw new Error('Could not install cargo-prebuilt from fallback');
-                }
-                // Verify file
-                if (prebuiltVerify === 'sha256') {
-                    yield (0, sha256_1.verifyFileHash)(prebuiltVersion, prebuiltPath);
-                    core.info('Verified downloaded archive with sha256 hash');
-                }
-                else if (prebuiltVerify === 'minisign') {
-                    yield (0, minisign_1.verifyFileMinisign)(prebuiltVersion, `${prebuiltTarget}${fileEnding}`, prebuiltPath);
-                    core.info('Verified downloaded archive with minisign');
-                }
-                // eslint-disable-next-line no-empty
-                else if (prebuiltVerify === 'none') {
-                }
-                else
-                    throw new Error('invalid prebuilt-verify type');
-                // Extract
-                if (prebuiltTarget.includes('windows-msvc')) {
-                    directory = yield tc.extractZip(prebuiltPath);
-                }
-                else {
-                    directory = yield tc.extractTar(prebuiltPath);
-                }
-                directory = yield tc.cacheDir(directory, 'cargo-prebuilt', prebuiltVersion, prebuiltTarget);
-                core.addPath(directory);
-                core.info('Installed cargo-prebuilt');
-            }
-            core.debug(`cargo-prebuilt: ${directory}`);
-            // Install prebuilt crates if needed
-            if (pkgs !== '') {
-                const args = [];
-                if (target !== '')
-                    args.push(`--target=${target}`);
-                if (indexKey !== '')
-                    args.push(`--index-key=${indexKey}`);
-                if (index !== '')
-                    args.push(`--index=${index}`);
-                if (auth !== '')
-                    args.push(`--auth=${auth}`);
-                if (config !== '')
-                    args.push(`--config=${config}`);
-                if (path !== '')
-                    args.push(`--path=${path}`);
-                if (reportPath !== '')
-                    args.push(`--report-path=${reportPath}`);
-                if (ci === 'true')
-                    args.push('--ci');
-                if (sig !== '')
-                    args.push(`--sig=${sig}`);
-                if (noVerify === 'true')
-                    args.push('--no-verify');
-                if (safe === 'true')
-                    args.push('--safe');
-                if (out === 'true')
-                    args.push('--out');
-                if (color === 'true')
-                    args.push('--color');
-                if (color === 'false')
-                    args.push('--no-color');
-                args.push(pkgs);
-                const output = yield exec.getExecOutput('cargo-prebuilt', args);
-                core.setOutput('out', output.stdout);
-                if (path !== '')
-                    core.addPath(path);
-                core.debug(`Installed tools ${pkgs}`);
-            }
-            process.exit(0);
-        }
-        catch (error) {
-            if (error instanceof Error)
-                core.setFailed(error.message);
-        }
-    });
-}
-run();
-
-
-/***/ }),
-
-/***/ 5433:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.verifyFileMinisign = void 0;
-const core = __importStar(__nccwpck_require__(9093));
-const exec = __importStar(__nccwpck_require__(7775));
-const tc = __importStar(__nccwpck_require__(5561));
-const node_process_1 = __nccwpck_require__(7742);
-const sha256_1 = __nccwpck_require__(6664);
-const vals_1 = __nccwpck_require__(2673);
-const node_path_1 = __importDefault(__nccwpck_require__(9411));
-const node_fs_1 = __nccwpck_require__(7561);
-function verifyFileMinisign(version, fileName, filePath) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            const rsign2 = yield installRsign2();
-            const res = yield fetch(`${vals_1.DL_URL}${version}/${fileName}.minisig`);
-            const minisignFile = (yield res.text()).trim();
-            const archivePath = node_path_1.default.dirname(filePath);
-            const minisignFilePath = `${archivePath}/${fileName}.minisig`;
-            (0, node_fs_1.writeFileSync)(minisignFilePath, minisignFile);
-            yield exec.exec(rsign2, [
-                'verify',
-                `${filePath}`,
-                '-P',
-                `${vals_1.PREBUILT_INDEX_PUB_KEY}`,
-                '-x',
-                `${minisignFilePath}`
-            ]);
-            resolve();
-        }));
-    });
-}
-exports.verifyFileMinisign = verifyFileMinisign;
-function installRsign2() {
-    return __awaiter(this, void 0, void 0, function* () {
-        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            let dlFile;
-            let dlHash;
-            switch (node_process_1.arch) {
-                case 'arm':
-                    if (node_process_1.platform === 'linux') {
-                        dlFile = 'armv7-unknown-linux-musleabihf';
-                        dlHash =
-                            '2a187ff785d0520ecdd14af4fb0834d0cdb90d41fa42470413ba6f8187e5142b';
-                    }
-                    else
-                        throw new Error('unsupported platform');
-                    break;
-                case 'arm64':
-                    if (node_process_1.platform === 'linux') {
-                        dlFile = 'aarch64-unknown-linux-musl';
-                        dlHash =
-                            '18803b59a0c4baa9b3d5c7a26a5e6336df9c5ff04c851944ffafa87e111ae026';
-                    }
-                    else if (node_process_1.platform === 'darwin') {
-                        dlFile = 'aarch64-apple-darwin';
-                        dlHash =
-                            'e5770f96ad51aab5a35e595462283ae521f3fd995158c82f220d28b498802cf0';
-                    }
-                    else
-                        throw new Error('unsupported platform');
-                    break;
-                case 'x64':
-                    if (node_process_1.platform === 'linux') {
-                        dlFile = 'x86_64-unknown-linux-musl';
-                        dlHash =
-                            'd013658223ba79bd84b2e409ed26f2c533dcb15546071b33eb32b499bade9349';
-                    }
-                    else if (node_process_1.platform === 'darwin') {
-                        dlFile = 'x86_64-apple-darwin';
-                        dlHash =
-                            'cf3a305a760beb7245b564dee4b180198542f63aef2f954e1f9f3f732a7cf6d0';
-                    }
-                    else if (node_process_1.platform === 'win32') {
-                        dlFile = 'x86_64-pc-windows-msvc';
-                        dlHash =
-                            '8e77f7f2f01413cc2ef767fd2adac04ef4972749625dc29a4ee09a014895ee4d';
-                    }
-                    else if (node_process_1.platform === 'freebsd') {
-                        dlFile = 'x86_64-unknown-freebsd';
-                        dlHash =
-                            '4e32038f9acece4996be3671e709b9d188d7e7464c3c13954ee12298244bd884';
-                    }
-                    else if (node_process_1.platform === 'sunos') {
-                        dlFile = 'x86_64-sun-solaris';
-                        dlHash =
-                            '54abb8a9dee8d7562beefffeede9edf691677437d34293572d884f2aa0fd68e0';
-                    }
-                    else
-                        throw new Error('unsupported platform');
-                    break;
-                case 's390x':
-                    if (node_process_1.platform === 'linux') {
-                        dlFile = 's390x-unknown-linux-gnu';
-                        dlHash =
-                            '73c4a77aef2bace5a9ea1471348203c26e2c8bb869d587f7376ddff31063b8ad';
-                    }
-                    else
-                        throw new Error('unsupported platform');
-                    break;
-            }
-            if (!dlFile)
-                throw new Error('unsupported or missing platform');
-            const toolPath = yield tc.downloadTool(`${vals_1.RSIGN_DL_URL}${dlFile}.tar.gz`);
-            const hash = yield (0, sha256_1.hashFile)(toolPath);
-            if (hash !== dlHash)
-                throw new Error('sha256 hash does not match for rsign2');
-            const directory = yield tc.extractTar(toolPath);
-            core.info('Installed rsign2');
-            resolve(`${directory}/rsign`);
-        }));
-    });
-}
-
-
-/***/ }),
-
-/***/ 6664:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.hashFile = exports.verifyFileHash = void 0;
-const node_fs_1 = __nccwpck_require__(7561);
-const node_crypto_1 = __nccwpck_require__(6005);
-const vals_1 = __nccwpck_require__(2673);
-function verifyFileHash(version, filePath) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            const res = yield fetch(`${vals_1.DL_URL}${version}/hashes.sha256`);
-            const sha256File = (yield res.text()).trim();
-            const fileHash = yield hashFile(filePath);
-            // This is probably fine, but maybe this should be change later
-            if (!sha256File.includes(fileHash))
-                throw new Error('sha256 hash does not match');
-            resolve();
-        }));
-    });
-}
-exports.verifyFileHash = verifyFileHash;
-function hashFile(filePath) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return new Promise(resolve => {
-            const fd = (0, node_fs_1.readFileSync)(filePath);
-            const hash = (0, node_crypto_1.createHash)('sha256').update(fd).digest('hex');
-            resolve(hash);
-        });
-    });
-}
-exports.hashFile = hashFile;
-
-
-/***/ }),
-
-/***/ 933:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.currentTarget = void 0;
-const node_process_1 = __nccwpck_require__(7742);
-function currentTarget() {
-    return __awaiter(this, void 0, void 0, function* () {
-        return new Promise(resolve => {
-            switch (node_process_1.arch) {
-                case 'arm':
-                    if (node_process_1.platform === 'linux')
-                        resolve('armv7-unknown-linux-gnueabihf');
-                    else
-                        throw new Error('unsupported platform');
-                    break;
-                case 'arm64':
-                    if (node_process_1.platform === 'linux')
-                        resolve('aarch64-unknown-linux-gnu');
-                    else if (node_process_1.platform === 'darwin')
-                        resolve('aarch64-apple-darwin');
-                    else
-                        throw new Error('unsupported platform');
-                    break;
-                case 'riscv64':
-                    if (node_process_1.platform === 'linux')
-                        resolve('riscv64gc-unknown-linux-gnu');
-                    else
-                        throw new Error('unsupported platform');
-                    break;
-                case 's390x':
-                    if (node_process_1.platform === 'linux')
-                        resolve('s390x-unknown-linux-gnu');
-                    else
-                        throw new Error('unsupported platform');
-                    break;
-                case 'x64':
-                    if (node_process_1.platform === 'linux')
-                        resolve('x86_64-unknown-linux-gnu');
-                    else if (node_process_1.platform === 'darwin')
-                        resolve('x86_64-apple-darwin');
-                    else if (node_process_1.platform === 'win32')
-                        resolve('x86_64-pc-windows-msvc');
-                    else if (node_process_1.platform === 'freebsd')
-                        resolve('x86_64-unknown-freebsd');
-                    else if (node_process_1.platform === 'sunos')
-                        resolve('x86_64-sun-solaris');
-                    else
-                        throw new Error('unsupported platform');
-                    break;
-            }
-            throw new Error('unsupported or missing platform');
-        });
-    });
-}
-exports.currentTarget = currentTarget;
-
-
-/***/ }),
-
-/***/ 2673:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.PREBUILT_INDEX_PUB_KEY = exports.RSIGN_DL_URL = exports.DL_URL = void 0;
-exports.DL_URL = 'https://github.com/cargo-prebuilt/cargo-prebuilt/releases/download/v';
-exports.RSIGN_DL_URL = 'https://github.com/cargo-prebuilt/index/releases/download/rsign2-0.6.3/';
-exports.PREBUILT_INDEX_PUB_KEY = 'RWTSqAR1Hbfu6mBFiaz4hb9I9gikhMmvKkVbyz4SJF/oxJcbbScmCqqO';
-
-
-/***/ }),
 
 /***/ 1513:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
@@ -29045,6 +28567,429 @@ exports["default"] = _default;
 
 /***/ }),
 
+/***/ 9356:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.run = void 0;
+const core = __importStar(__nccwpck_require__(9093));
+const tc = __importStar(__nccwpck_require__(5561));
+const exec = __importStar(__nccwpck_require__(7775));
+const utils_1 = __nccwpck_require__(442);
+const vals_1 = __nccwpck_require__(1722);
+const sha256_1 = __nccwpck_require__(4710);
+const minisign_1 = __nccwpck_require__(688);
+async function run() {
+    try {
+        let prebuiltVersion = core.getInput('prebuilt-version');
+        let fallbackVersion;
+        let prebuiltTarget = core.getInput('prebuilt-target');
+        const prebuiltVerify = core.getInput('prebuilt-verify');
+        const pkgs = core.getInput('pkgs');
+        const target = core.getInput('target');
+        const indexKey = core.getInput('index-key');
+        const index = core.getInput('index');
+        const auth = core.getInput('auth');
+        const config = core.getInput('config');
+        const path = core.getInput('path');
+        const reportPath = core.getInput('report-path');
+        const ci = core.getInput('ci');
+        const sig = core.getInput('sig');
+        const noVerify = core.getInput('no-verify');
+        const safe = core.getInput('safe');
+        const out = core.getInput('out');
+        const color = core.getInput('color');
+        if (prebuiltVersion === 'latest') {
+            const output = await exec.getExecOutput('git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git');
+            const re = /v((\d+)\.(\d+)\.(\d+))[^-]/g;
+            const tmp = [...output.stdout.matchAll(re)].map(a => {
+                return a[1];
+            });
+            const latest = tmp.sort((a, b) => {
+                if (a === b)
+                    return 0;
+                const as = a.split('.');
+                const bs = b.split('.');
+                if (as[0] > bs[0] ||
+                    (as[0] === bs[0] && as[1] > bs[1]) ||
+                    (as[0] === bs[0] && as[1] === bs[1] && as[2] > bs[2]))
+                    return 1;
+                return -1;
+            });
+            prebuiltVersion = latest[latest.length - 1];
+            fallbackVersion = latest[latest.length - 2];
+            core.info(`Picked cargo-prebuilt version ${prebuiltVersion} with fallback version ${fallbackVersion}`);
+        }
+        if (prebuiltTarget === 'current') {
+            prebuiltTarget = await (0, utils_1.currentTarget)();
+        }
+        core.setOutput('prebuilt-version', prebuiltVersion);
+        core.setOutput('prebuilt-target', prebuiltTarget);
+        const fileEnding = prebuiltTarget.includes('windows-msvc')
+            ? '.zip'
+            : '.tar.gz';
+        let directory = tc.find('cargo-prebuilt', prebuiltVersion, prebuiltTarget);
+        core.debug(`Found cargo-prebuilt in tool cache at ${directory}`);
+        core.addPath(directory);
+        if (directory === '') {
+            let prebuiltPath;
+            // Download
+            try {
+                prebuiltPath = await tc.downloadTool(`${vals_1.DL_URL}${prebuiltVersion}/${prebuiltTarget}${fileEnding}`);
+            }
+            catch {
+                core.warning('Failed to install main version using fallback version');
+                if (fallbackVersion) {
+                    prebuiltVersion = fallbackVersion;
+                    prebuiltPath = await tc.downloadTool(`${vals_1.DL_URL}${prebuiltVersion}/${prebuiltTarget}${fileEnding}`);
+                }
+                else
+                    throw new Error('Could not install cargo-prebuilt from fallback');
+            }
+            // Verify file
+            if (prebuiltVerify === 'sha256') {
+                await (0, sha256_1.verifyFileHash)(prebuiltVersion, prebuiltPath);
+                core.info('Verified downloaded archive with sha256 hash');
+            }
+            else if (prebuiltVerify === 'minisign') {
+                await (0, minisign_1.verifyFileMinisign)(prebuiltVersion, `${prebuiltTarget}${fileEnding}`, prebuiltPath);
+                core.info('Verified downloaded archive with minisign');
+            }
+            // eslint-disable-next-line no-empty
+            else if (prebuiltVerify === 'none') {
+            }
+            else
+                throw new Error('invalid prebuilt-verify type');
+            // Extract
+            if (prebuiltTarget.includes('windows-msvc')) {
+                directory = await tc.extractZip(prebuiltPath);
+            }
+            else {
+                directory = await tc.extractTar(prebuiltPath);
+            }
+            directory = await tc.cacheDir(directory, 'cargo-prebuilt', prebuiltVersion, prebuiltTarget);
+            core.addPath(directory);
+            core.info('Installed cargo-prebuilt');
+        }
+        core.debug(`cargo-prebuilt: ${directory}`);
+        // Install prebuilt crates if needed
+        if (pkgs !== '') {
+            const args = [];
+            if (target !== '')
+                args.push(`--target=${target}`);
+            if (indexKey !== '')
+                args.push(`--index-key=${indexKey}`);
+            if (index !== '')
+                args.push(`--index=${index}`);
+            if (auth !== '')
+                args.push(`--auth=${auth}`);
+            if (config !== '')
+                args.push(`--config=${config}`);
+            if (path !== '')
+                args.push(`--path=${path}`);
+            if (reportPath !== '')
+                args.push(`--report-path=${reportPath}`);
+            if (ci === 'true')
+                args.push('--ci');
+            if (sig !== '')
+                args.push(`--sig=${sig}`);
+            if (noVerify === 'true')
+                args.push('--no-verify');
+            if (safe === 'true')
+                args.push('--safe');
+            if (out === 'true')
+                args.push('--out');
+            if (color === 'true')
+                args.push('--color');
+            if (color === 'false')
+                args.push('--no-color');
+            args.push(pkgs);
+            const output = await exec.getExecOutput('cargo-prebuilt', args);
+            core.setOutput('out', output.stdout);
+            if (path !== '')
+                core.addPath(path);
+            core.debug(`Installed tools ${pkgs}`);
+        }
+        process.exit(0);
+    }
+    catch (error) {
+        if (error instanceof Error)
+            core.setFailed(error.message);
+    }
+}
+exports.run = run;
+
+
+/***/ }),
+
+/***/ 688:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.verifyFileMinisign = void 0;
+const core = __importStar(__nccwpck_require__(9093));
+const exec = __importStar(__nccwpck_require__(7775));
+const tc = __importStar(__nccwpck_require__(5561));
+const node_process_1 = __nccwpck_require__(7742);
+const sha256_1 = __nccwpck_require__(4710);
+const vals_1 = __nccwpck_require__(1722);
+const node_path_1 = __importDefault(__nccwpck_require__(9411));
+const node_fs_1 = __nccwpck_require__(7561);
+async function verifyFileMinisign(version, fileName, filePath) {
+    const rsign2 = await installRsign2();
+    const res = await fetch(`${vals_1.DL_URL}${version}/${fileName}.minisig`);
+    const minisignFile = (await res.text()).trim();
+    const archivePath = node_path_1.default.dirname(filePath);
+    const minisignFilePath = `${archivePath}/${fileName}.minisig`;
+    (0, node_fs_1.writeFileSync)(minisignFilePath, minisignFile);
+    await exec.exec(rsign2, [
+        'verify',
+        `${filePath}`,
+        '-P',
+        `${vals_1.PREBUILT_INDEX_PUB_KEY}`,
+        '-x',
+        `${minisignFilePath}`
+    ]);
+}
+exports.verifyFileMinisign = verifyFileMinisign;
+async function installRsign2() {
+    let dlFile;
+    let dlHash;
+    switch (node_process_1.arch) {
+        case 'arm':
+            if (node_process_1.platform === 'linux') {
+                dlFile = 'armv7-unknown-linux-musleabihf';
+                dlHash =
+                    '2a187ff785d0520ecdd14af4fb0834d0cdb90d41fa42470413ba6f8187e5142b';
+            }
+            else
+                throw new Error('unsupported platform');
+            break;
+        case 'arm64':
+            if (node_process_1.platform === 'linux') {
+                dlFile = 'aarch64-unknown-linux-musl';
+                dlHash =
+                    '18803b59a0c4baa9b3d5c7a26a5e6336df9c5ff04c851944ffafa87e111ae026';
+            }
+            else if (node_process_1.platform === 'darwin') {
+                dlFile = 'aarch64-apple-darwin';
+                dlHash =
+                    'e5770f96ad51aab5a35e595462283ae521f3fd995158c82f220d28b498802cf0';
+            }
+            else
+                throw new Error('unsupported platform');
+            break;
+        case 'x64':
+            if (node_process_1.platform === 'linux') {
+                dlFile = 'x86_64-unknown-linux-musl';
+                dlHash =
+                    'd013658223ba79bd84b2e409ed26f2c533dcb15546071b33eb32b499bade9349';
+            }
+            else if (node_process_1.platform === 'darwin') {
+                dlFile = 'x86_64-apple-darwin';
+                dlHash =
+                    'cf3a305a760beb7245b564dee4b180198542f63aef2f954e1f9f3f732a7cf6d0';
+            }
+            else if (node_process_1.platform === 'win32') {
+                dlFile = 'x86_64-pc-windows-msvc';
+                dlHash =
+                    '8e77f7f2f01413cc2ef767fd2adac04ef4972749625dc29a4ee09a014895ee4d';
+            }
+            else if (node_process_1.platform === 'freebsd') {
+                dlFile = 'x86_64-unknown-freebsd';
+                dlHash =
+                    '4e32038f9acece4996be3671e709b9d188d7e7464c3c13954ee12298244bd884';
+            }
+            else if (node_process_1.platform === 'sunos') {
+                dlFile = 'x86_64-sun-solaris';
+                dlHash =
+                    '54abb8a9dee8d7562beefffeede9edf691677437d34293572d884f2aa0fd68e0';
+            }
+            else
+                throw new Error('unsupported platform');
+            break;
+        case 's390x':
+            if (node_process_1.platform === 'linux') {
+                dlFile = 's390x-unknown-linux-gnu';
+                dlHash =
+                    '73c4a77aef2bace5a9ea1471348203c26e2c8bb869d587f7376ddff31063b8ad';
+            }
+            else
+                throw new Error('unsupported platform');
+            break;
+    }
+    if (!dlFile)
+        throw new Error('unsupported or missing platform');
+    const toolPath = await tc.downloadTool(`${vals_1.RSIGN_DL_URL}${dlFile}.tar.gz`);
+    const hash = await (0, sha256_1.hashFile)(toolPath);
+    if (hash !== dlHash)
+        throw new Error('sha256 hash does not match for rsign2');
+    const directory = await tc.extractTar(toolPath);
+    core.info('Installed rsign2');
+    return `${directory}/rsign`;
+}
+
+
+/***/ }),
+
+/***/ 4710:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.hashFile = exports.verifyFileHash = void 0;
+const node_fs_1 = __nccwpck_require__(7561);
+const node_crypto_1 = __nccwpck_require__(6005);
+const vals_1 = __nccwpck_require__(1722);
+async function verifyFileHash(version, filePath) {
+    const res = await fetch(`${vals_1.DL_URL}${version}/hashes.sha256`);
+    const sha256File = (await res.text()).trim();
+    const fileHash = await hashFile(filePath);
+    // This is probably fine, but maybe this should be change later
+    if (!sha256File.includes(fileHash))
+        throw new Error('sha256 hash does not match');
+}
+exports.verifyFileHash = verifyFileHash;
+async function hashFile(filePath) {
+    return new Promise(resolve => {
+        const fd = (0, node_fs_1.readFileSync)(filePath);
+        const hash = (0, node_crypto_1.createHash)('sha256').update(fd).digest('hex');
+        resolve(hash);
+    });
+}
+exports.hashFile = hashFile;
+
+
+/***/ }),
+
+/***/ 442:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.currentTarget = void 0;
+const node_process_1 = __nccwpck_require__(7742);
+async function currentTarget() {
+    return new Promise(resolve => {
+        switch (node_process_1.arch) {
+            case 'arm':
+                if (node_process_1.platform === 'linux')
+                    resolve('armv7-unknown-linux-gnueabihf');
+                else
+                    throw new Error('unsupported platform');
+                break;
+            case 'arm64':
+                if (node_process_1.platform === 'linux')
+                    resolve('aarch64-unknown-linux-gnu');
+                else if (node_process_1.platform === 'darwin')
+                    resolve('aarch64-apple-darwin');
+                else
+                    throw new Error('unsupported platform');
+                break;
+            case 'riscv64':
+                if (node_process_1.platform === 'linux')
+                    resolve('riscv64gc-unknown-linux-gnu');
+                else
+                    throw new Error('unsupported platform');
+                break;
+            case 's390x':
+                if (node_process_1.platform === 'linux')
+                    resolve('s390x-unknown-linux-gnu');
+                else
+                    throw new Error('unsupported platform');
+                break;
+            case 'x64':
+                if (node_process_1.platform === 'linux')
+                    resolve('x86_64-unknown-linux-gnu');
+                else if (node_process_1.platform === 'darwin')
+                    resolve('x86_64-apple-darwin');
+                else if (node_process_1.platform === 'win32')
+                    resolve('x86_64-pc-windows-msvc');
+                else if (node_process_1.platform === 'freebsd')
+                    resolve('x86_64-unknown-freebsd');
+                else if (node_process_1.platform === 'sunos')
+                    resolve('x86_64-sun-solaris');
+                else
+                    throw new Error('unsupported platform');
+                break;
+        }
+        throw new Error('unsupported or missing platform');
+    });
+}
+exports.currentTarget = currentTarget;
+
+
+/***/ }),
+
+/***/ 1722:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PREBUILT_INDEX_PUB_KEY = exports.RSIGN_DL_URL = exports.DL_URL = void 0;
+exports.DL_URL = 'https://github.com/cargo-prebuilt/cargo-prebuilt/releases/download/v';
+exports.RSIGN_DL_URL = 'https://github.com/cargo-prebuilt/index/releases/download/rsign2-0.6.3/';
+exports.PREBUILT_INDEX_PUB_KEY = 'RWTSqAR1Hbfu6mBFiaz4hb9I9gikhMmvKkVbyz4SJF/oxJcbbScmCqqO';
+
+
+/***/ }),
+
 /***/ 9491:
 /***/ ((module) => {
 
@@ -30974,13 +30919,19 @@ module.exports = parseParams
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(4234);
-/******/ 	module.exports = __webpack_exports__;
-/******/ 	
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+var exports = __webpack_exports__;
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const main_1 = __nccwpck_require__(9356);
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
+(0, main_1.run)();
+
+})();
+
+module.exports = __webpack_exports__;
 /******/ })()
 ;
-//# sourceMappingURL=index.js.map
