@@ -28,35 +28,35 @@ See:
   ```
 - ```yaml
   pkgs: 'A CSV list of prebuilt crates needed with optional version numbers (see cargo-prebuilt cli)'
-    default: 'none'
+    default: ''
   ```
 - ```yaml
   target: 'Target for the version of the tools to install'
-    default: 'prebuilt-target'
+    default: prebuilt-target (current)
   ```
 - ```yaml
   index-key: 'Index to use from the config file. Requires ci to be set to false if using'
-    default: 'none'
+    default: ''
   ```
 - ```yaml
   index: 'Index to use to install tools from'
-    default: 'cargo-prebuilt/index'
+    default: prebuilt default ('gh-pub:github.com/cargo-prebuilt/index')
   ```
 - ```yaml
   auth: 'Auth token for index if needed'
-    default: 'none'
+    default: ''
   ```
 - ```yaml
   config: 'Path to config file to use. Requires ci to be set to false if using'
-    default: 'none'
+    default: ''
   ```
 - ```yaml
   path: 'Path where prebuilt crates are installed'
-    default: 'let cargo-prebuilt decide'
+    default: let cargo-prebuilt decide ($HOME/.cargo/bin)
   ```
 - ```yaml
   report-path: 'Path where reports are installed'
-    default: 'none, disable ci flag to use this'
+    default: disable ci flag to use this
   ```
 - ```yaml
   ci: 'Use the --ci flag'
@@ -64,7 +64,7 @@ See:
   ```
 - ```yaml
   sig: 'A public verifying key encoded as base64'
-    default: 'none, requires index'
+    default: ''
   ```
 - ```yaml
   no-verify: 'Do not verify downloaded files'
@@ -80,7 +80,7 @@ See:
   ```
 - ```yaml
   color: 'Enable or disable color'
-    default: 'let cargo-prebuilt decide'
+    default: let cargo-prebuilt decide
   ```
 
 ### Outputs
@@ -127,6 +127,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install cargo-prebuilt
         uses: cargo-prebuilt/cargo-prebuilt-action@v3
+        with:
+          pkgs: cargo-deny
       - run: cargo prebuilt just
 ```
 
@@ -144,6 +146,6 @@ jobs:
       - name: Install cargo-prebuilt
         uses: cargo-prebuilt/cargo-prebuilt-action@v3
         with:
-          prebuilt-version: 0.5.3 # Legacy version, may not work with v2 action
+          prebuilt-version: 0.6.0
           prebuilt-target: aarch64-apple-darwin
 ```
