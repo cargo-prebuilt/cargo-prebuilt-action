@@ -1,4 +1,4 @@
-import * as core from '@actions/core'
+import * as core from './trim/core'
 import * as tc from '@actions/tool-cache'
 import * as exec from '@actions/exec'
 import { currentTarget } from './utils'

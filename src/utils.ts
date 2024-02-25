@@ -25,7 +25,6 @@ export function currentTarget(): string {
       else if (platform === 'darwin') return 'x86_64-apple-darwin'
       else if (platform === 'win32') return 'x86_64-pc-windows-msvc'
       else if (platform === 'freebsd') return 'x86_64-unknown-freebsd'
-      else if (platform === 'sunos') return 'x86_64-sun-solaris'
       else core.setFailed('unsupported platform')
       break
   }

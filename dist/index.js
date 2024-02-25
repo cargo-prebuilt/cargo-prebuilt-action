@@ -29248,6 +29248,153 @@ exports["default"] = _default;
 
 /***/ }),
 
+/***/ 2738:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.installRsign2 = void 0;
+const core = __importStar(__nccwpck_require__(2933));
+const exec = __importStar(__nccwpck_require__(5337));
+const vals_1 = __nccwpck_require__(1722);
+const sha256_1 = __nccwpck_require__(4710);
+const node_fs_1 = __importDefault(__nccwpck_require__(7561));
+const node_process_1 = __nccwpck_require__(7742);
+const promises_1 = __nccwpck_require__(6402);
+const node_stream_1 = __nccwpck_require__(4492);
+const RSIGN_DL_URL = 'https://github.com/cargo-prebuilt/index/releases/download/rsign2-0.6.3/';
+async function installRsign2() {
+    let dlFile;
+    let dlHash;
+    core.info(`Installing rsign2 to ${vals_1.TMP_DIR}`);
+    switch (node_process_1.arch) {
+        case 'arm':
+            if (node_process_1.platform === 'linux') {
+                dlFile = 'armv7-unknown-linux-musleabihf';
+                dlHash =
+                    '2a187ff785d0520ecdd14af4fb0834d0cdb90d41fa42470413ba6f8187e5142b';
+            }
+            else
+                core.setFailed('unsupported platform');
+            break;
+        case 'arm64':
+            if (node_process_1.platform === 'linux') {
+                dlFile = 'aarch64-unknown-linux-musl';
+                dlHash =
+                    '18803b59a0c4baa9b3d5c7a26a5e6336df9c5ff04c851944ffafa87e111ae026';
+            }
+            else if (node_process_1.platform === 'darwin') {
+                dlFile = 'aarch64-apple-darwin';
+                dlHash =
+                    'e5770f96ad51aab5a35e595462283ae521f3fd995158c82f220d28b498802cf0';
+            }
+            else if (node_process_1.platform === 'win32') {
+                dlFile = 'aarch64-pc-windows-msvc';
+                dlHash =
+                    '07cfee377c07427a95a70dd8a8c81d0c2e376fe5ae848cc294fd9da762b57263';
+            }
+            else
+                core.setFailed('unsupported platform');
+            break;
+        case 'x64':
+            if (node_process_1.platform === 'linux') {
+                dlFile = 'x86_64-unknown-linux-musl';
+                dlHash =
+                    'd013658223ba79bd84b2e409ed26f2c533dcb15546071b33eb32b499bade9349';
+            }
+            else if (node_process_1.platform === 'darwin') {
+                dlFile = 'x86_64-apple-darwin';
+                dlHash =
+                    'cf3a305a760beb7245b564dee4b180198542f63aef2f954e1f9f3f732a7cf6d0';
+            }
+            else if (node_process_1.platform === 'win32') {
+                dlFile = 'x86_64-pc-windows-msvc';
+                dlHash =
+                    '8e77f7f2f01413cc2ef767fd2adac04ef4972749625dc29a4ee09a014895ee4d';
+            }
+            else if (node_process_1.platform === 'freebsd') {
+                dlFile = 'x86_64-unknown-freebsd';
+                dlHash =
+                    '4e32038f9acece4996be3671e709b9d188d7e7464c3c13954ee12298244bd884';
+            }
+            else
+                core.setFailed('unsupported platform');
+            break;
+        case 's390x':
+            if (node_process_1.platform === 'linux') {
+                dlFile = 's390x-unknown-linux-gnu';
+                dlHash =
+                    '73c4a77aef2bace5a9ea1471348203c26e2c8bb869d587f7376ddff31063b8ad';
+            }
+            else
+                core.setFailed('unsupported platform');
+            break;
+    }
+    if (!dlFile)
+        core.setFailed('unsupported or missing platform (rsign2)');
+    const tarPath = `${vals_1.TMP_DIR}/rsign.tar.gz`;
+    core.debug(`rsign2: \ndlFile ${dlFile}\ndlHash ${dlHash}\nbinPath ${tarPath}`);
+    const res = await fetch(`${RSIGN_DL_URL}${dlFile}.tar.gz`);
+    if (res.status === 200) {
+        const stream = node_fs_1.default.createWriteStream(tarPath, { flags: 'w' });
+        // @ts-expect-error body stream should not be null
+        await (0, promises_1.finished)(node_stream_1.Readable.fromWeb(res.body).pipe(stream));
+    }
+    else
+        core.setFailed('Could not download rsign2');
+    core.debug('Finished download of rsign');
+    // Check tar hash
+    const hash = await (0, sha256_1.hashFile)(tarPath);
+    if (hash !== dlHash)
+        core.setFailed('sha256 hash does not match for rsign2');
+    core.debug('Hash matched for rsign');
+    // TODO: Use own tar binary??
+    // Extract
+    core.debug('Extracting rsign');
+    exec.execGetOutput(`tar -xzvf ${tarPath} -C ${vals_1.TMP_DIR}`);
+    let toolPath;
+    if (node_process_1.platform === 'win32')
+        toolPath = `${vals_1.TMP_DIR}/rsign.exe`;
+    else
+        toolPath = `${vals_1.TMP_DIR}/rsign`;
+    core.debug(`Tool path rsign ${toolPath}`);
+    // Check if rsign works
+    exec.execFile(toolPath, ['--version']);
+    core.info('Installed rsign2');
+    return toolPath;
+}
+exports.installRsign2 = installRsign2;
+
+
+/***/ }),
+
 /***/ 9356:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -29278,7 +29425,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
-const core = __importStar(__nccwpck_require__(9093));
+const core = __importStar(__nccwpck_require__(2933));
 const tc = __importStar(__nccwpck_require__(5561));
 const exec = __importStar(__nccwpck_require__(7775));
 const utils_1 = __nccwpck_require__(442);
@@ -29463,17 +29610,17 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.verifyFileMinisign = void 0;
 const node_fs_1 = __importDefault(__nccwpck_require__(7561));
 const node_path_1 = __importDefault(__nccwpck_require__(9411));
-const node_process_1 = __nccwpck_require__(7742);
 const node_stream_1 = __nccwpck_require__(4492);
 const promises_1 = __nccwpck_require__(6402);
 const core = __importStar(__nccwpck_require__(2933));
 const exec = __importStar(__nccwpck_require__(5337));
-const sha256_1 = __nccwpck_require__(4710);
 const vals_1 = __nccwpck_require__(1722);
+const dl_rsign2_1 = __nccwpck_require__(2738);
 async function verifyFileMinisign(version, fileName, filePath) {
-    const rsign2 = await installRsign2();
+    const rsign2 = await (0, dl_rsign2_1.installRsign2)();
     const archivePath = node_path_1.default.dirname(filePath);
     const minisignFilePath = `${archivePath}/${fileName}.minisig`;
+    core.debug('Downloading minisig');
     const res = await fetch(`${vals_1.DL_URL}${version}/${fileName}.minisig`);
     if (res.status === 200) {
         const stream = node_fs_1.default.createWriteStream(minisignFilePath, { flags: 'w' });
@@ -29482,6 +29629,7 @@ async function verifyFileMinisign(version, fileName, filePath) {
     }
     else
         core.setFailed('Could not download minisig');
+    core.debug('Downloaded minisig');
     exec.execFile(rsign2, [
         'verify',
         `${filePath}`,
@@ -29492,101 +29640,6 @@ async function verifyFileMinisign(version, fileName, filePath) {
     ]);
 }
 exports.verifyFileMinisign = verifyFileMinisign;
-async function installRsign2() {
-    let dlFile;
-    let dlHash;
-    core.info(`Installing rsign2 to ${vals_1.TMP_DIR}`);
-    switch (node_process_1.arch) {
-        case 'arm':
-            if (node_process_1.platform === 'linux') {
-                dlFile = 'armv7-unknown-linux-musleabihf';
-                dlHash =
-                    '2a187ff785d0520ecdd14af4fb0834d0cdb90d41fa42470413ba6f8187e5142b';
-            }
-            else
-                core.setFailed('unsupported platform');
-            break;
-        case 'arm64':
-            if (node_process_1.platform === 'linux') {
-                dlFile = 'aarch64-unknown-linux-musl';
-                dlHash =
-                    '18803b59a0c4baa9b3d5c7a26a5e6336df9c5ff04c851944ffafa87e111ae026';
-            }
-            else if (node_process_1.platform === 'darwin') {
-                dlFile = 'aarch64-apple-darwin';
-                dlHash =
-                    'e5770f96ad51aab5a35e595462283ae521f3fd995158c82f220d28b498802cf0';
-            }
-            else
-                core.setFailed('unsupported platform');
-            break;
-        case 'x64':
-            if (node_process_1.platform === 'linux') {
-                dlFile = 'x86_64-unknown-linux-musl';
-                dlHash =
-                    'd013658223ba79bd84b2e409ed26f2c533dcb15546071b33eb32b499bade9349';
-            }
-            else if (node_process_1.platform === 'darwin') {
-                dlFile = 'x86_64-apple-darwin';
-                dlHash =
-                    'cf3a305a760beb7245b564dee4b180198542f63aef2f954e1f9f3f732a7cf6d0';
-            }
-            else if (node_process_1.platform === 'win32') {
-                dlFile = 'x86_64-pc-windows-msvc';
-                dlHash =
-                    '8e77f7f2f01413cc2ef767fd2adac04ef4972749625dc29a4ee09a014895ee4d';
-            }
-            else if (node_process_1.platform === 'freebsd') {
-                dlFile = 'x86_64-unknown-freebsd';
-                dlHash =
-                    '4e32038f9acece4996be3671e709b9d188d7e7464c3c13954ee12298244bd884';
-            }
-            else if (node_process_1.platform === 'sunos') {
-                dlFile = 'x86_64-sun-solaris';
-                dlHash =
-                    '54abb8a9dee8d7562beefffeede9edf691677437d34293572d884f2aa0fd68e0';
-            }
-            else
-                core.setFailed('unsupported platform');
-            break;
-        case 's390x':
-            if (node_process_1.platform === 'linux') {
-                dlFile = 's390x-unknown-linux-gnu';
-                dlHash =
-                    '73c4a77aef2bace5a9ea1471348203c26e2c8bb869d587f7376ddff31063b8ad';
-            }
-            else
-                core.setFailed('unsupported platform');
-            break;
-    }
-    if (!dlFile)
-        core.setFailed('unsupported or missing platform (rsign2)');
-    const tarPath = `${vals_1.TMP_DIR}/rsign.tar.gz`;
-    const res = await fetch(`${vals_1.RSIGN_DL_URL}${dlFile}.tar.gz`);
-    if (res.status === 200) {
-        const stream = node_fs_1.default.createWriteStream(tarPath, { flags: 'w' });
-        // @ts-expect-error body stream should not be null
-        await (0, promises_1.finished)(node_stream_1.Readable.fromWeb(res.body).pipe(stream));
-    }
-    else
-        core.setFailed('Could not download minisig');
-    // Check tar hash
-    const hash = await (0, sha256_1.hashFile)(tarPath);
-    if (hash !== dlHash)
-        core.setFailed('sha256 hash does not match for rsign2');
-    // TODO: Use own tar binary??
-    // Extract
-    exec.execGetOutput(`tar -xzvf ${tarPath} -C ${vals_1.TMP_DIR}`);
-    let toolPath;
-    if (node_process_1.platform === 'win32')
-        toolPath = `${vals_1.TMP_DIR}/rsign.exe`;
-    else
-        toolPath = `${vals_1.TMP_DIR}/rsign`;
-    // Check if rsign works
-    exec.execFile(toolPath, ['--version']);
-    core.info('Installed rsign2');
-    return toolPath;
-}
 
 
 /***/ }),
@@ -29978,8 +30031,6 @@ function currentTarget() {
                 return 'x86_64-pc-windows-msvc';
             else if (node_process_1.platform === 'freebsd')
                 return 'x86_64-unknown-freebsd';
-            else if (node_process_1.platform === 'sunos')
-                return 'x86_64-sun-solaris';
             else
                 core.setFailed('unsupported platform');
             break;
@@ -30001,12 +30052,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TMP_DIR = exports.PREBUILT_INDEX_PUB_KEY = exports.RSIGN_DL_URL = exports.DL_URL = void 0;
+exports.TMP_DIR = exports.PREBUILT_INDEX_PUB_KEY = exports.DL_URL = void 0;
 const node_fs_1 = __importDefault(__nccwpck_require__(7561));
 const node_path_1 = __importDefault(__nccwpck_require__(9411));
 const node_os_1 = __importDefault(__nccwpck_require__(612));
 exports.DL_URL = 'https://github.com/cargo-prebuilt/cargo-prebuilt/releases/download/v';
-exports.RSIGN_DL_URL = 'https://github.com/cargo-prebuilt/index/releases/download/rsign2-0.6.3/';
 exports.PREBUILT_INDEX_PUB_KEY = 'RWTSqAR1Hbfu6mBFiaz4hb9I9gikhMmvKkVbyz4SJF/oxJcbbScmCqqO';
 exports.TMP_DIR = node_fs_1.default.mkdtempSync(node_path_1.default.join(node_os_1.default.tmpdir(), 'cargo-prebuilt-'));
 
