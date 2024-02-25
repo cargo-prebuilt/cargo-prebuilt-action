@@ -29248,6 +29248,136 @@ exports["default"] = _default;
 
 /***/ }),
 
+/***/ 1407:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.installQstract = void 0;
+const node_process_1 = __nccwpck_require__(7742);
+const core = __importStar(__nccwpck_require__(2933));
+const exec = __importStar(__nccwpck_require__(5337));
+const vals_1 = __nccwpck_require__(1722);
+const sha256_1 = __nccwpck_require__(4710);
+const utils_1 = __nccwpck_require__(442);
+const QSTRACT_DL_URL = 'https://github.com/cargo-prebuilt/qstract/releases/download/v0.1.1/';
+async function installQstract() {
+    let dlFile;
+    let dlHash;
+    core.info(`Installing qstract to ${vals_1.TMP_DIR}`);
+    switch (node_process_1.arch) {
+        case 'arm':
+            if (node_process_1.platform === 'linux') {
+                dlFile = 'armv7-unknown-linux-musleabihf';
+                dlHash =
+                    '3d5cf7aa92e9d522639ce5c5dc5820e28d3c1c503119eb68f11be31e6f820dee';
+            }
+            else
+                core.setFailed('unsupported platform');
+            break;
+        case 'arm64':
+            if (node_process_1.platform === 'linux') {
+                dlFile = 'aarch64-unknown-linux-musl';
+                dlHash =
+                    'f877fa5f76274425611fe326d647cde2d055a67a36818146dfcf16d12271d4ab';
+            }
+            else if (node_process_1.platform === 'darwin') {
+                dlFile = 'aarch64-apple-darwin';
+                dlHash =
+                    '0700b6305098eedab4b17b0ce72d89d1cd9f1b999485784acfe86dd0cabff7d0';
+            }
+            else if (node_process_1.platform === 'win32') {
+                dlFile = 'aarch64-pc-windows-msvc.exe';
+                dlHash =
+                    '91ad82e48f0a675bf819d8915fa4aaf0e4869a035bc1b9fb7543bd47d7e93323';
+            }
+            else
+                core.setFailed('unsupported platform');
+            break;
+        case 'x64':
+            if (node_process_1.platform === 'linux') {
+                dlFile = 'x86_64-unknown-linux-musl';
+                dlHash =
+                    'cacdaad15b7f804483c0646fdd80b34b3744827a812146e454e8b74445040551';
+            }
+            else if (node_process_1.platform === 'darwin') {
+                dlFile = 'x86_64-apple-darwin';
+                dlHash =
+                    '324aa56cb0d714892d15a074109240b280394c6efd115c941300878af9a42b7c';
+            }
+            else if (node_process_1.platform === 'win32') {
+                dlFile = 'x86_64-pc-windows-msvc.exe';
+                dlHash =
+                    '2d316e448f25c9f23f1945b0ef2d8d1fd7d98ddd2dc727557a5b6e348ab16c94';
+            }
+            else if (node_process_1.platform === 'freebsd') {
+                dlFile = 'x86_64-unknown-freebsd';
+                dlHash =
+                    '83218dd8957867c084cf68a054cc0a29464e3f0070ebf6aac750c4c2641307f0';
+            }
+            else
+                core.setFailed('unsupported platform');
+            break;
+        case 's390x':
+            if (node_process_1.platform === 'linux') {
+                dlFile = 's390x-unknown-linux-gnu';
+                dlHash =
+                    '7071438b8fd23c27a44a8d262580f638abab459c7218b5b87cd40e3c14c9710';
+            }
+            else
+                core.setFailed('unsupported platform');
+            break;
+    }
+    if (!dlFile)
+        core.setFailed('unsupported or missing platform (qstract)');
+    let binPath = `${vals_1.TMP_DIR}/qstract`;
+    if (node_process_1.platform === 'win32')
+        binPath += '.exe';
+    core.debug(`qstract: \ndlFile ${dlFile}\ndlHash ${dlHash}\nbinPath ${binPath}`);
+    await (0, utils_1.downloadFile)(`${QSTRACT_DL_URL}qstract-${dlFile}`, binPath);
+    // Check hash
+    const hash = await (0, sha256_1.hashFile)(binPath);
+    if (hash !== dlHash)
+        core.setFailed('sha256 hash does not match for qstract');
+    core.debug('Hash matched for qstract');
+    if (!binPath.endsWith('.exe')) {
+        exec.execGetOutput(`chmod +x ${binPath}`);
+        core.debug('Detected unix, trying to set exe bit with chmod');
+    }
+    // Test run
+    exec.execFile(binPath, ['--version']);
+    core.info('Installed qstract');
+    return binPath;
+}
+exports.installQstract = installQstract;
+
+
+/***/ }),
+
 /***/ 2738:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -29285,7 +29415,7 @@ const vals_1 = __nccwpck_require__(1722);
 const sha256_1 = __nccwpck_require__(4710);
 const utils_1 = __nccwpck_require__(442);
 const RSIGN_DL_URL = 'https://github.com/cargo-prebuilt/index/releases/download/rsign2-0.6.3/';
-async function installRsign2() {
+async function installRsign2(qstract) {
     let dlFile;
     let dlHash;
     core.info(`Installing rsign2 to ${vals_1.TMP_DIR}`);
@@ -29362,10 +29492,9 @@ async function installRsign2() {
     if (hash !== dlHash)
         core.setFailed('sha256 hash does not match for rsign2');
     core.debug('Hash matched for rsign');
-    // TODO: Use own tar binary??
     // Extract
     core.debug('Extracting rsign');
-    exec.execGetOutput(`tar -xzvf ${tarPath} -C ${vals_1.TMP_DIR}`);
+    exec.execFile(qstract, ['-z', '-C', `${vals_1.TMP_DIR}`, tarPath]);
     let toolPath;
     if (node_process_1.platform === 'win32')
         toolPath = `${vals_1.TMP_DIR}/rsign.exe`;
@@ -29417,6 +29546,8 @@ const utils_1 = __nccwpck_require__(442);
 const vals_1 = __nccwpck_require__(1722);
 const sha256_1 = __nccwpck_require__(4710);
 const minisign_1 = __nccwpck_require__(688);
+const dl_qstract_1 = __nccwpck_require__(1407);
+const dl_rsign2_1 = __nccwpck_require__(2738);
 const tc = __importStar(__nccwpck_require__(5561));
 const exec = __importStar(__nccwpck_require__(7775));
 async function run() {
@@ -29440,22 +29571,7 @@ async function run() {
         const out = core.getInput('out');
         const color = core.getInput('color');
         if (prebuiltVersion === 'latest') {
-            const output = await exec.getExecOutput('git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git');
-            const re = /v((\d+)\.(\d+)\.(\d+))[^-]/g;
-            const tmp = [...output.stdout.matchAll(re)].map(a => {
-                return a[1];
-            });
-            const latest = tmp.sort((a, b) => {
-                if (a === b)
-                    return 0;
-                const as = a.split('.');
-                const bs = b.split('.');
-                if (as[0] > bs[0] ||
-                    (as[0] === bs[0] && as[1] > bs[1]) ||
-                    (as[0] === bs[0] && as[1] === bs[1] && as[2] > bs[2]))
-                    return 1;
-                return -1;
-            });
+            const latest = (0, utils_1.getVersions)();
             prebuiltVersion = latest[latest.length - 1];
             fallbackVersion = latest[latest.length - 2];
             core.info(`Picked cargo-prebuilt version ${prebuiltVersion} with fallback version ${fallbackVersion}`);
@@ -29465,9 +29581,20 @@ async function run() {
         }
         core.setOutput('prebuilt-version', prebuiltVersion);
         core.setOutput('prebuilt-target', prebuiltTarget);
+        // Install qstract
+        const qstract = await (0, dl_qstract_1.installQstract)();
+        // Install rsign2
+        let rsignLet = '';
+        if (prebuiltVerify === 'minisign') {
+            core.debug('Verify method is minisign, dowloading rsign2');
+            rsignLet = await (0, dl_rsign2_1.installRsign2)(qstract);
+        }
+        const rsign = rsignLet;
+        // Install cargo-prebuilt
         const fileEnding = prebuiltTarget.includes('windows-msvc')
             ? '.zip'
             : '.tar.gz';
+        // OLD
         let directory = tc.find('cargo-prebuilt', prebuiltVersion, prebuiltTarget);
         core.debug(`Found cargo-prebuilt in tool cache at ${directory}`);
         core.addPath(directory);
@@ -29492,7 +29619,7 @@ async function run() {
                 core.info('Verified downloaded archive with sha256 hash');
             }
             else if (prebuiltVerify === 'minisign') {
-                await (0, minisign_1.verifyFileMinisign)(prebuiltVersion, `${prebuiltTarget}${fileEnding}`, prebuiltPath);
+                await (0, minisign_1.verifyFileMinisign)(prebuiltVersion, `${prebuiltTarget}${fileEnding}`, prebuiltPath, rsign);
                 core.info('Verified downloaded archive with minisign');
             }
             // eslint-disable-next-line no-empty
@@ -29599,10 +29726,8 @@ exports.verifyFileMinisign = void 0;
 const node_path_1 = __importDefault(__nccwpck_require__(9411));
 const exec = __importStar(__nccwpck_require__(5337));
 const vals_1 = __nccwpck_require__(1722);
-const dl_rsign2_1 = __nccwpck_require__(2738);
 const utils_1 = __nccwpck_require__(442);
-async function verifyFileMinisign(version, fileName, filePath) {
-    const rsign2 = await (0, dl_rsign2_1.installRsign2)();
+async function verifyFileMinisign(version, fileName, filePath, rsign2) {
     const archivePath = node_path_1.default.dirname(filePath);
     const minisignFilePath = `${archivePath}/${fileName}.minisig`;
     await (0, utils_1.downloadFile)(`${vals_1.DL_URL}${version}/${fileName}.minisig`, minisignFilePath);
@@ -29970,12 +30095,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.downloadFileWithErr = exports.downloadFile = exports.currentTarget = void 0;
+exports.downloadFileWithErr = exports.downloadFile = exports.currentTarget = exports.getVersions = void 0;
 const node_process_1 = __nccwpck_require__(7742);
 const node_fs_1 = __importDefault(__nccwpck_require__(7561));
 const promises_1 = __nccwpck_require__(6402);
 const node_stream_1 = __nccwpck_require__(4492);
 const core = __importStar(__nccwpck_require__(2933));
+const exec = __importStar(__nccwpck_require__(5337));
+function getVersions() {
+    const output = exec.execGetOutput('git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git');
+    const re = /v((\d+)\.(\d+)\.(\d+))[^-]/g;
+    const tmp = [...output.matchAll(re)].map(a => {
+        return a[1];
+    });
+    return tmp.sort((a, b) => {
+        if (a === b)
+            return 0;
+        const as = a.split('.');
+        const bs = b.split('.');
+        if (as[0] > bs[0] ||
+            (as[0] === bs[0] && as[1] > bs[1]) ||
+            (as[0] === bs[0] && as[1] === bs[1] && as[2] > bs[2]))
+            return 1;
+        return -1;
+    });
+}
+exports.getVersions = getVersions;
 function currentTarget() {
     switch (node_process_1.arch) {
         case 'arm':

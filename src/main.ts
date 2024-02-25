@@ -1,8 +1,10 @@
 import * as core from './trim/core'
-import { currentTarget } from './utils'
+import { currentTarget, getVersions } from './utils'
 import { DL_URL } from './vals'
 import { verifyFileHash } from './sha256'
 import { verifyFileMinisign } from './minisign'
+import { installQstract } from './dl/dl-qstract'
+import { installRsign2 } from './dl/dl-rsign2'
 
 import * as tc from '@actions/tool-cache'
 import * as exec from '@actions/exec'
@@ -30,27 +32,7 @@ export async function run(): Promise<void> {
     const color: string = core.getInput('color')
 
     if (prebuiltVersion === 'latest') {
-      const output = await exec.getExecOutput(
-        'git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git'
-      )
-
-      const re = /v((\d+)\.(\d+)\.(\d+))[^-]/g
-      const tmp = [...output.stdout.matchAll(re)].map(a => {
-        return a[1]
-      })
-
-      const latest = tmp.sort((a, b) => {
-        if (a === b) return 0
-        const as = a.split('.')
-        const bs = b.split('.')
-        if (
-          as[0] > bs[0] ||
-          (as[0] === bs[0] && as[1] > bs[1]) ||
-          (as[0] === bs[0] && as[1] === bs[1] && as[2] > bs[2])
-        )
-          return 1
-        return -1
-      })
+      const latest = getVersions()
       prebuiltVersion = latest[latest.length - 1]
       fallbackVersion = latest[latest.length - 2]
       core.info(
@@ -64,10 +46,23 @@ export async function run(): Promise<void> {
     core.setOutput('prebuilt-version', prebuiltVersion)
     core.setOutput('prebuilt-target', prebuiltTarget)
 
+    // Install qstract
+    const qstract = await installQstract()
+
+    // Install rsign2
+    let rsignLet = ''
+    if (prebuiltVerify === 'minisign') {
+      core.debug('Verify method is minisign, dowloading rsign2')
+      rsignLet = await installRsign2(qstract)
+    }
+    const rsign = rsignLet
+
+    // Install cargo-prebuilt
     const fileEnding: string = prebuiltTarget.includes('windows-msvc')
       ? '.zip'
       : '.tar.gz'
 
+    // OLD
     let directory = tc.find('cargo-prebuilt', prebuiltVersion, prebuiltTarget)
     core.debug(`Found cargo-prebuilt in tool cache at ${directory}`)
     core.addPath(directory)
@@ -98,7 +93,8 @@ export async function run(): Promise<void> {
         await verifyFileMinisign(
           prebuiltVersion,
           `${prebuiltTarget}${fileEnding}`,
-          prebuiltPath
+          prebuiltPath,
+          rsign
         )
         core.info('Verified downloaded archive with minisign')
       }

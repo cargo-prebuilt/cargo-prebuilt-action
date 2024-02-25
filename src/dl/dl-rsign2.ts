@@ -8,7 +8,7 @@ import { downloadFile } from '../utils'
 const RSIGN_DL_URL =
   'https://github.com/cargo-prebuilt/index/releases/download/rsign2-0.6.3/'
 
-export async function installRsign2(): Promise<string> {
+export async function installRsign2(qstract: string): Promise<string> {
   let dlFile
   let dlHash
 
@@ -78,10 +78,9 @@ export async function installRsign2(): Promise<string> {
   if (hash !== dlHash) core.setFailed('sha256 hash does not match for rsign2')
   core.debug('Hash matched for rsign')
 
-  // TODO: Use own tar binary??
   // Extract
   core.debug('Extracting rsign')
-  exec.execGetOutput(`tar -xzvf ${tarPath} -C ${TMP_DIR}`)
+  exec.execFile(qstract, ['-z', '-C', `${TMP_DIR}`, tarPath])
 
   let toolPath
   if (platform === 'win32') toolPath = `${TMP_DIR}/rsign.exe`

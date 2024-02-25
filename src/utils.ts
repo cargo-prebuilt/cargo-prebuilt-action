@@ -3,6 +3,31 @@ import fs from 'node:fs'
 import { finished } from 'node:stream/promises'
 import { Readable } from 'node:stream'
 import * as core from './trim/core'
+import * as exec from './trim/exec'
+
+export function getVersions(): string[] {
+  const output = exec.execGetOutput(
+    'git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git'
+  )
+
+  const re = /v((\d+)\.(\d+)\.(\d+))[^-]/g
+  const tmp = [...output.matchAll(re)].map(a => {
+    return a[1]
+  })
+
+  return tmp.sort((a, b) => {
+    if (a === b) return 0
+    const as = a.split('.')
+    const bs = b.split('.')
+    if (
+      as[0] > bs[0] ||
+      (as[0] === bs[0] && as[1] > bs[1]) ||
+      (as[0] === bs[0] && as[1] === bs[1] && as[2] > bs[2])
+    )
+      return 1
+    return -1
+  })
+}
 
 export function currentTarget(): string {
   switch (arch) {
