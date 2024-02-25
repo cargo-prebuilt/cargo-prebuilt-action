@@ -1,4 +1,5 @@
 import fs from 'node:fs'
+import { sep } from 'node:path'
 import * as core from './trim/core'
 import * as exec from './trim/exec'
 import { currentTarget, downloadFileWithErr, getVersions } from './utils'
@@ -7,9 +8,6 @@ import { verifyFileHash } from './sha256'
 import { verifyFileMinisign } from './minisign'
 import { installQstract } from './dl/dl-qstract'
 import { installRsign2 } from './dl/dl-rsign2'
-
-//import * as tc from '@actions/tool-cache'
-//import * as exec from '@actions/exec'
 
 export async function run(): Promise<void> {
   try {
@@ -105,8 +103,8 @@ export async function run(): Promise<void> {
       exec.execFile(qstract, ['-z', '-C', `${TMP_DIR}`, prebuiltPath])
     }
 
-    let tmpBin = `${TMP_DIR}/cargo-prebuilt`
-    let finalBin = `${INSTALL_DIR}/cargo-prebuilt`
+    let tmpBin = `${TMP_DIR}${sep}cargo-prebuilt`
+    let finalBin = `${INSTALL_DIR}${sep}cargo-prebuilt`
     if (prebuiltTarget.includes('windows-msvc')) {
       tmpBin += '.exe'
       finalBin += '.exe'

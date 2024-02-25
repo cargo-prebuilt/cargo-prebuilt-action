@@ -961,6 +961,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const node_fs_1 = __importDefault(__nccwpck_require__(561));
+const node_path_1 = __nccwpck_require__(411);
 const core = __importStar(__nccwpck_require__(933));
 const exec = __importStar(__nccwpck_require__(337));
 const utils_1 = __nccwpck_require__(442);
@@ -969,8 +970,6 @@ const sha256_1 = __nccwpck_require__(710);
 const minisign_1 = __nccwpck_require__(688);
 const dl_qstract_1 = __nccwpck_require__(407);
 const dl_rsign2_1 = __nccwpck_require__(738);
-//import * as tc from '@actions/tool-cache'
-//import * as exec from '@actions/exec'
 async function run() {
     try {
         let prebuiltVersion = core.getInput('prebuilt-version');
@@ -1048,8 +1047,8 @@ async function run() {
         else {
             exec.execFile(qstract, ['-z', '-C', `${vals_1.TMP_DIR}`, prebuiltPath]);
         }
-        let tmpBin = `${vals_1.TMP_DIR}/cargo-prebuilt`;
-        let finalBin = `${vals_1.INSTALL_DIR}/cargo-prebuilt`;
+        let tmpBin = `${vals_1.TMP_DIR}${node_path_1.sep}cargo-prebuilt`;
+        let finalBin = `${vals_1.INSTALL_DIR}${node_path_1.sep}cargo-prebuilt`;
         if (prebuiltTarget.includes('windows-msvc')) {
             tmpBin += '.exe';
             finalBin += '.exe';
