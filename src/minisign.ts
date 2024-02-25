@@ -1,11 +1,12 @@
-import * as core from '@actions/core'
-import * as exec from '@actions/exec'
-import * as tc from '@actions/tool-cache'
-import { arch, platform } from 'node:process'
-import { hashFile } from './sha256'
-import { DL_URL, PREBUILT_INDEX_PUB_KEY, RSIGN_DL_URL } from './vals'
+import fs from 'node:fs'
 import path from 'node:path'
-import { writeFileSync } from 'node:fs'
+import { arch, platform } from 'node:process'
+import { Readable } from 'node:stream'
+import { finished } from 'node:stream/promises'
+import * as core from './trim/core'
+import * as exec from './trim/exec'
+import { hashFile } from './sha256'
+import { DL_URL, PREBUILT_INDEX_PUB_KEY, RSIGN_DL_URL, TMP_DIR } from './vals'
 
 export async function verifyFileMinisign(
   version: string,
@@ -14,14 +15,17 @@ export async function verifyFileMinisign(
 ): Promise<void> {
   const rsign2 = await installRsign2()
 
-  const res = await fetch(`${DL_URL}${version}/${fileName}.minisig`)
-  const minisignFile = (await res.text()).trim()
-
   const archivePath = path.dirname(filePath)
   const minisignFilePath = `${archivePath}/${fileName}.minisig`
-  writeFileSync(minisignFilePath, minisignFile)
 
-  await exec.exec(rsign2, [
+  const res = await fetch(`${DL_URL}${version}/${fileName}.minisig`)
+  if (res.status === 200) {
+    const stream = fs.createWriteStream(minisignFilePath, { flags: 'w' })
+    // @ts-expect-error body stream should not be null
+    await finished(Readable.fromWeb(res.body).pipe(stream))
+  } else core.setFailed('Could not download minisig')
+
+  exec.execFile(rsign2, [
     'verify',
     `${filePath}`,
     '-P',
@@ -35,13 +39,15 @@ async function installRsign2(): Promise<string> {
   let dlFile
   let dlHash
 
+  core.info(`Installing rsign2 to ${TMP_DIR}`)
+
   switch (arch) {
     case 'arm':
       if (platform === 'linux') {
         dlFile = 'armv7-unknown-linux-musleabihf'
         dlHash =
           '2a187ff785d0520ecdd14af4fb0834d0cdb90d41fa42470413ba6f8187e5142b'
-      } else throw new Error('unsupported platform')
+      } else core.setFailed('unsupported platform')
       break
     case 'arm64':
       if (platform === 'linux') {
@@ -52,7 +58,7 @@ async function installRsign2(): Promise<string> {
         dlFile = 'aarch64-apple-darwin'
         dlHash =
           'e5770f96ad51aab5a35e595462283ae521f3fd995158c82f220d28b498802cf0'
-      } else throw new Error('unsupported platform')
+      } else core.setFailed('unsupported platform')
       break
     case 'x64':
       if (platform === 'linux') {
@@ -75,26 +81,44 @@ async function installRsign2(): Promise<string> {
         dlFile = 'x86_64-sun-solaris'
         dlHash =
           '54abb8a9dee8d7562beefffeede9edf691677437d34293572d884f2aa0fd68e0'
-      } else throw new Error('unsupported platform')
+      } else core.setFailed('unsupported platform')
       break
     case 's390x':
       if (platform === 'linux') {
         dlFile = 's390x-unknown-linux-gnu'
         dlHash =
           '73c4a77aef2bace5a9ea1471348203c26e2c8bb869d587f7376ddff31063b8ad'
-      } else throw new Error('unsupported platform')
+      } else core.setFailed('unsupported platform')
       break
   }
 
-  if (!dlFile) throw new Error('unsupported or missing platform')
+  if (!dlFile) core.setFailed('unsupported or missing platform (rsign2)')
 
-  const toolPath = await tc.downloadTool(`${RSIGN_DL_URL}${dlFile}.tar.gz`)
-  const hash = await hashFile(toolPath)
+  const tarPath = `${TMP_DIR}/rsign.tar.gz`
 
-  if (hash !== dlHash) throw new Error('sha256 hash does not match for rsign2')
+  const res = await fetch(`${RSIGN_DL_URL}${dlFile}.tar.gz`)
+  if (res.status === 200) {
+    const stream = fs.createWriteStream(tarPath, { flags: 'w' })
+    // @ts-expect-error body stream should not be null
+    await finished(Readable.fromWeb(res.body).pipe(stream))
+  } else core.setFailed('Could not download minisig')
 
-  const directory = await tc.extractTar(toolPath)
+  // Check tar hash
+  const hash = await hashFile(tarPath)
+  if (hash !== dlHash) core.setFailed('sha256 hash does not match for rsign2')
+
+  // TODO: Use own tar binary??
+  // Extract
+  exec.execGetOutput(`tar -xzvf ${tarPath} -C ${TMP_DIR}`)
+
+  let toolPath
+  if (platform === 'win32') toolPath = `${TMP_DIR}/rsign.exe`
+  else toolPath = `${TMP_DIR}/rsign`
+
+  // Check if rsign works
+  exec.execFile(toolPath, ['--version'])
+
   core.info('Installed rsign2')
 
-  return `${directory}/rsign`
+  return toolPath
 }

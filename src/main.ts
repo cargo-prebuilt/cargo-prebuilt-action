@@ -57,7 +57,7 @@ export async function run(): Promise<void> {
       )
     }
     if (prebuiltTarget === 'current') {
-      prebuiltTarget = await currentTarget()
+      prebuiltTarget = currentTarget()
     }
 
     core.setOutput('prebuilt-version', prebuiltVersion)
