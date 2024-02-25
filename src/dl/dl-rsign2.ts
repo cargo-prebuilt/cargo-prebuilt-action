@@ -1,11 +1,9 @@
+import { arch, platform } from 'node:process'
 import * as core from '../trim/core'
 import * as exec from '../trim/exec'
 import { TMP_DIR } from '../vals'
 import { hashFile } from '../sha256'
-import fs from 'node:fs'
-import { arch, platform } from 'node:process'
-import { finished } from 'node:stream/promises'
-import { Readable } from 'node:stream'
+import { downloadFile } from '../utils'
 
 const RSIGN_DL_URL =
   'https://github.com/cargo-prebuilt/index/releases/download/rsign2-0.6.3/'
@@ -73,13 +71,7 @@ export async function installRsign2(): Promise<string> {
 
   core.debug(`rsign2: \ndlFile ${dlFile}\ndlHash ${dlHash}\nbinPath ${tarPath}`)
 
-  const res = await fetch(`${RSIGN_DL_URL}${dlFile}.tar.gz`)
-  if (res.status === 200) {
-    const stream = fs.createWriteStream(tarPath, { flags: 'w' })
-    // @ts-expect-error body stream should not be null
-    await finished(Readable.fromWeb(res.body).pipe(stream))
-  } else core.setFailed('Could not download rsign2')
-  core.debug('Finished download of rsign')
+  await downloadFile(`${RSIGN_DL_URL}${dlFile}.tar.gz`, tarPath)
 
   // Check tar hash
   const hash = await hashFile(tarPath)

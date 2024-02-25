@@ -1,10 +1,11 @@
 import * as core from './trim/core'
-import * as tc from '@actions/tool-cache'
-import * as exec from '@actions/exec'
 import { currentTarget } from './utils'
 import { DL_URL } from './vals'
 import { verifyFileHash } from './sha256'
 import { verifyFileMinisign } from './minisign'
+
+import * as tc from '@actions/tool-cache'
+import * as exec from '@actions/exec'
 
 export async function run(): Promise<void> {
   try {
@@ -149,6 +150,8 @@ export async function run(): Promise<void> {
       if (path !== '') core.addPath(path)
       core.debug(`Installed tools ${pkgs}`)
     }
+
+    // TODO: Cleanup tmp directory
 
     process.exit(0)
   } catch (error) {

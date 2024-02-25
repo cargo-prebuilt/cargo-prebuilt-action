@@ -29276,19 +29276,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.installRsign2 = void 0;
+const node_process_1 = __nccwpck_require__(7742);
 const core = __importStar(__nccwpck_require__(2933));
 const exec = __importStar(__nccwpck_require__(5337));
 const vals_1 = __nccwpck_require__(1722);
 const sha256_1 = __nccwpck_require__(4710);
-const node_fs_1 = __importDefault(__nccwpck_require__(7561));
-const node_process_1 = __nccwpck_require__(7742);
-const promises_1 = __nccwpck_require__(6402);
-const node_stream_1 = __nccwpck_require__(4492);
+const utils_1 = __nccwpck_require__(442);
 const RSIGN_DL_URL = 'https://github.com/cargo-prebuilt/index/releases/download/rsign2-0.6.3/';
 async function installRsign2() {
     let dlFile;
@@ -29361,15 +29356,7 @@ async function installRsign2() {
         core.setFailed('unsupported or missing platform (rsign2)');
     const tarPath = `${vals_1.TMP_DIR}/rsign.tar.gz`;
     core.debug(`rsign2: \ndlFile ${dlFile}\ndlHash ${dlHash}\nbinPath ${tarPath}`);
-    const res = await fetch(`${RSIGN_DL_URL}${dlFile}.tar.gz`);
-    if (res.status === 200) {
-        const stream = node_fs_1.default.createWriteStream(tarPath, { flags: 'w' });
-        // @ts-expect-error body stream should not be null
-        await (0, promises_1.finished)(node_stream_1.Readable.fromWeb(res.body).pipe(stream));
-    }
-    else
-        core.setFailed('Could not download rsign2');
-    core.debug('Finished download of rsign');
+    await (0, utils_1.downloadFile)(`${RSIGN_DL_URL}${dlFile}.tar.gz`, tarPath);
     // Check tar hash
     const hash = await (0, sha256_1.hashFile)(tarPath);
     if (hash !== dlHash)
@@ -29426,12 +29413,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2933));
-const tc = __importStar(__nccwpck_require__(5561));
-const exec = __importStar(__nccwpck_require__(7775));
 const utils_1 = __nccwpck_require__(442);
 const vals_1 = __nccwpck_require__(1722);
 const sha256_1 = __nccwpck_require__(4710);
 const minisign_1 = __nccwpck_require__(688);
+const tc = __importStar(__nccwpck_require__(5561));
+const exec = __importStar(__nccwpck_require__(7775));
 async function run() {
     try {
         let prebuiltVersion = core.getInput('prebuilt-version');
@@ -29563,6 +29550,7 @@ async function run() {
                 core.addPath(path);
             core.debug(`Installed tools ${pkgs}`);
         }
+        // TODO: Cleanup tmp directory
         process.exit(0);
     }
     catch (error) {
@@ -29608,28 +29596,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.verifyFileMinisign = void 0;
-const node_fs_1 = __importDefault(__nccwpck_require__(7561));
 const node_path_1 = __importDefault(__nccwpck_require__(9411));
-const node_stream_1 = __nccwpck_require__(4492);
-const promises_1 = __nccwpck_require__(6402);
-const core = __importStar(__nccwpck_require__(2933));
 const exec = __importStar(__nccwpck_require__(5337));
 const vals_1 = __nccwpck_require__(1722);
 const dl_rsign2_1 = __nccwpck_require__(2738);
+const utils_1 = __nccwpck_require__(442);
 async function verifyFileMinisign(version, fileName, filePath) {
     const rsign2 = await (0, dl_rsign2_1.installRsign2)();
     const archivePath = node_path_1.default.dirname(filePath);
     const minisignFilePath = `${archivePath}/${fileName}.minisig`;
-    core.debug('Downloading minisig');
-    const res = await fetch(`${vals_1.DL_URL}${version}/${fileName}.minisig`);
-    if (res.status === 200) {
-        const stream = node_fs_1.default.createWriteStream(minisignFilePath, { flags: 'w' });
-        // @ts-expect-error body stream should not be null
-        await (0, promises_1.finished)(node_stream_1.Readable.fromWeb(res.body).pipe(stream));
-    }
-    else
-        core.setFailed('Could not download minisig');
-    core.debug('Downloaded minisig');
+    await (0, utils_1.downloadFile)(`${vals_1.DL_URL}${version}/${fileName}.minisig`, minisignFilePath);
     exec.execFile(rsign2, [
         'verify',
         `${filePath}`,
@@ -29990,9 +29966,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.currentTarget = void 0;
+exports.downloadFileWithErr = exports.downloadFile = exports.currentTarget = void 0;
 const node_process_1 = __nccwpck_require__(7742);
+const node_fs_1 = __importDefault(__nccwpck_require__(7561));
+const promises_1 = __nccwpck_require__(6402);
+const node_stream_1 = __nccwpck_require__(4492);
 const core = __importStar(__nccwpck_require__(2933));
 function currentTarget() {
     switch (node_process_1.arch) {
@@ -30039,6 +30021,25 @@ function currentTarget() {
     return 'NULL';
 }
 exports.currentTarget = currentTarget;
+async function downloadFile(url, path) {
+    if (!(await downloadFileWithErr(url, path)))
+        core.setFailed(`Could not download ${url}`);
+}
+exports.downloadFile = downloadFile;
+async function downloadFileWithErr(url, path) {
+    core.debug(`Started download of ${url} to ${path}`);
+    const res = await fetch(url);
+    if (res.status === 200) {
+        const stream = node_fs_1.default.createWriteStream(path, { flags: 'w' });
+        // @ts-expect-error body stream should not be null
+        await (0, promises_1.finished)(node_stream_1.Readable.fromWeb(res.body).pipe(stream));
+        core.debug(`Finished download of ${url} to ${path}`);
+        return true;
+    }
+    core.debug(`Could not download ${url}`);
+    return false;
+}
+exports.downloadFileWithErr = downloadFileWithErr;
 
 
 /***/ }),

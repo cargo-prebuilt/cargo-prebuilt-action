@@ -1,11 +1,9 @@
+import { arch, platform } from 'node:process'
 import * as core from '../trim/core'
 import * as exec from '../trim/exec'
 import { TMP_DIR } from '../vals'
 import { hashFile } from '../sha256'
-import fs from 'node:fs'
-import { arch, platform } from 'node:process'
-import { finished } from 'node:stream/promises'
-import { Readable } from 'node:stream'
+import { downloadFile } from '../utils'
 
 const QSTRACT_DL_URL =
   'https://github.com/cargo-prebuilt/qstract/releases/download/v0.1.1/'
@@ -76,13 +74,7 @@ export async function installQstract(): Promise<string> {
     `qstract: \ndlFile ${dlFile}\ndlHash ${dlHash}\nbinPath ${binPath}`
   )
 
-  const res = await fetch(`${QSTRACT_DL_URL}qstract-${dlFile}`)
-  if (res.status === 200) {
-    const stream = fs.createWriteStream(binPath, { flags: 'w' })
-    // @ts-expect-error body stream should not be null
-    await finished(Readable.fromWeb(res.body).pipe(stream))
-  } else core.setFailed('Could not download qstract')
-  core.debug('Finished download of qstract')
+  await downloadFile(`${QSTRACT_DL_URL}qstract-${dlFile}`, binPath)
 
   // Check hash
   const hash = await hashFile(binPath)

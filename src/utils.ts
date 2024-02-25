@@ -1,4 +1,7 @@
 import { arch, platform } from 'node:process'
+import fs from 'node:fs'
+import { finished } from 'node:stream/promises'
+import { Readable } from 'node:stream'
 import * as core from './trim/core'
 
 export function currentTarget(): string {
@@ -31,4 +34,27 @@ export function currentTarget(): string {
 
   core.setFailed('unsupported or missing platform')
   return 'NULL'
+}
+
+export async function downloadFile(url: string, path: string): Promise<void> {
+  if (!(await downloadFileWithErr(url, path)))
+    core.setFailed(`Could not download ${url}`)
+}
+
+export async function downloadFileWithErr(
+  url: string,
+  path: string
+): Promise<boolean> {
+  core.debug(`Started download of ${url} to ${path}`)
+  const res = await fetch(url)
+  if (res.status === 200) {
+    const stream = fs.createWriteStream(path, { flags: 'w' })
+    // @ts-expect-error body stream should not be null
+    await finished(Readable.fromWeb(res.body).pipe(stream))
+    core.debug(`Finished download of ${url} to ${path}`)
+    return true
+  }
+
+  core.debug(`Could not download ${url}`)
+  return false
 }
