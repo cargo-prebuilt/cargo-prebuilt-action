@@ -71,7 +71,7 @@ export async function installQstract(): Promise<string> {
   if (platform === 'win32') binPath += '.exe'
 
   core.debug(
-    `qstract: \ndlFile ${dlFile}\ndlHash ${dlHash}\nbinPath ${binPath}`
+    `qstract: \n    dlFile ${dlFile}\n    dlHash ${dlHash}\n    binPath ${binPath}`
   )
 
   await downloadFile(`${QSTRACT_DL_URL}qstract-${dlFile}`, binPath)

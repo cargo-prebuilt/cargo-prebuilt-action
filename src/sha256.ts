@@ -2,6 +2,8 @@ import { readFileSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { DL_URL } from './vals'
 
+// TODO: Use sha256 from qstract?
+
 export async function verifyFileHash(
   version: string,
   filePath: string

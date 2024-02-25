@@ -69,7 +69,9 @@ export async function installRsign2(qstract: string): Promise<string> {
 
   const tarPath = `${TMP_DIR}/rsign.tar.gz`
 
-  core.debug(`rsign2: \ndlFile ${dlFile}\ndlHash ${dlHash}\nbinPath ${tarPath}`)
+  core.debug(
+    `rsign2: \n    dlFile ${dlFile}\n    dlHash ${dlHash}\n    binPath ${tarPath}`
+  )
 
   await downloadFile(`${RSIGN_DL_URL}${dlFile}.tar.gz`, tarPath)
 
