@@ -115,6 +115,7 @@ export async function run(): Promise<void> {
 
     core.addPath(INSTALL_DIR)
     core.info(`Installed cargo-prebuilt@${prebuiltVersion} at ${finalBin}`)
+    core.setOutput('prebuilt-binary', finalBin)
 
     // Install prebuilt crates if needed
     if (pkgs !== '') {

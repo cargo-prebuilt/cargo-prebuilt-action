@@ -1056,7 +1056,8 @@ async function run() {
         }
         exec.execGetOutput(`mv ${tmpBin} ${finalBin}`);
         core.addPath(vals_1.INSTALL_DIR);
-        core.info(`Installed cargo-prebuilt@${prebuiltVersion}`);
+        core.info(`Installed cargo-prebuilt@${prebuiltVersion} at ${finalBin}`);
+        core.setOutput('prebuilt-binary', finalBin);
         // Install prebuilt crates if needed
         if (pkgs !== '') {
             const args = [];

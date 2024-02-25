@@ -67,6 +67,8 @@ outputs:
     description: 'Cargo prebuilt version that was installed'
   prebuilt-target:
     description: 'Cargo prebuilt target that was installed'
+  prebuilt-binary:
+    description: 'Cargo prebuilt binary install location'
   out:
     description: 'Stdout of cargo-prebuilt if it downloaded any tools'
 
