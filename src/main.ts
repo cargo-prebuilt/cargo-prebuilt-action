@@ -52,7 +52,7 @@ export async function run(): Promise<void> {
     // Install rsign2
     let rsignLet = ''
     if (prebuiltVerify === 'minisign') {
-      core.debug('Verify method is minisign, dowloading rsign2')
+      core.debug('Verify method is minisign, downloading rsign2')
       rsignLet = await installRsign2(qstract)
     }
     const rsign = rsignLet

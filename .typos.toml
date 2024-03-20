@@ -1,5 +1,2 @@
 [files]
-extend-exclude = [
-    "dist/*",
-    "lib/*"
-]
+extend-exclude = ["dist/*", "lib/*"]
