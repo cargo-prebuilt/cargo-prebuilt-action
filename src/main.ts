@@ -69,7 +69,7 @@ export async function run(): Promise<void> {
       prebuiltPath
     )
     if (!dl1) {
-      core.warning('Failed to install main version using fallback version')
+      core.warning('Failed to install latest version using fallback version')
       if (fallbackVersion) prebuiltVersion = fallbackVersion
       const dl2 = await downloadFileWithErr(
         `${DL_URL}${prebuiltVersion}/${prebuiltTarget}${fileEnding}`,
@@ -97,11 +97,9 @@ export async function run(): Promise<void> {
 
     // Extract
     core.debug(`Extracting ${prebuiltPath}`)
-    if (prebuiltTarget.includes('windows-msvc')) {
-      exec.execFile(qstract, ['--zip', '-C', `${TMP_DIR}`, prebuiltPath])
-    } else {
-      exec.execFile(qstract, ['-z', '-C', `${TMP_DIR}`, prebuiltPath])
-    }
+    if (prebuiltTarget.includes('windows-msvc'))
+      exec.execFile(qstract, ['--zip', '-C', TMP_DIR, prebuiltPath])
+    else exec.execFile(qstract, ['-z', '-C', TMP_DIR, prebuiltPath])
 
     let tmpBin = `${TMP_DIR}${sep}cargo-prebuilt`
     let finalBin = `${INSTALL_DIR}${sep}cargo-prebuilt`
@@ -118,15 +116,39 @@ export async function run(): Promise<void> {
     // Install prebuilt crates if needed
     if (pkgs !== '') {
       const args: string[] = []
-      if (target !== '') args.push(`--target=${target}`)
-      if (indexKey !== '') args.push(`--index-key=${indexKey}`)
-      if (index !== '') args.push(`--index=${index}`)
-      if (auth !== '') args.push(`--auth=${auth}`)
-      if (config !== '') args.push(`--config=${config}`)
-      if (path !== '') args.push(`--path=${path}`)
-      if (reportPath !== '') args.push(`--report-path=${reportPath}`)
+      if (target !== '') {
+        args.push('--target')
+        args.push(target)
+      }
+      if (indexKey !== '') {
+        args.push('--index-key')
+        args.push(indexKey)
+      }
+      if (index !== '') {
+        args.push('--index')
+        args.push(index)
+      }
+      if (auth !== '') {
+        args.push('--auth')
+        args.push(auth)
+      }
+      if (config !== '') {
+        args.push('--config')
+        args.push(config)
+      }
+      if (path !== '') {
+        args.push('--path')
+        args.push(path)
+      }
+      if (reportPath !== '') {
+        args.push('--report-path')
+        args.push(reportPath)
+      }
+      if (sig !== '') {
+        args.push('--sig')
+        args.push(sig)
+      }
       if (ci === 'true') args.push('--ci')
-      if (sig !== '') args.push(`--sig=${sig}`)
       if (noVerify === 'true') args.push('--no-verify')
       if (safe === 'true') args.push('--safe')
       if (out === 'true') args.push('--out')

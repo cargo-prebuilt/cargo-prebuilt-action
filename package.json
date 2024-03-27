@@ -1,7 +1,7 @@
 {
   "name": "install-cargo-prebuilt-action",
   "description": "Install cargo prebuilt to a runner and some packages if you want.",
-  "version": "3.3.1",
+  "version": "3.4.0",
   "author": "harmless-tech, cargo-prebuilt",
   "private": true,
   "homepage": "https://github.com/cargo-prebuilt/cargo-prebuilt-action",
@@ -73,8 +73,8 @@
     "@types/jest": "^29.5.12",
     "@types/node": "^20.11.30",
     "@types/uuid": "^9.0.8",
-    "@typescript-eslint/eslint-plugin": "^7.3.1",
-    "@typescript-eslint/parser": "^7.3.1",
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
     "@vercel/ncc": "^0.38.1",
     "eslint": "^8.57.0",
     "eslint-plugin-github": "^4.10.2",
@@ -85,6 +85,6 @@
     "prettier": "3.2.5",
     "prettier-eslint": "^16.3.0",
     "ts-jest": "^29.1.2",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.3"
   }
 }

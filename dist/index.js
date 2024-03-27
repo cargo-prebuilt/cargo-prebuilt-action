@@ -1018,7 +1018,7 @@ async function run() {
         const prebuiltPath = `${vals_1.TMP_DIR}/${prebuiltTarget}${fileEnding}`;
         const dl1 = await (0, utils_1.downloadFileWithErr)(`${vals_1.DL_URL}${prebuiltVersion}/${prebuiltTarget}${fileEnding}`, prebuiltPath);
         if (!dl1) {
-            core.warning('Failed to install main version using fallback version');
+            core.warning('Failed to install latest version using fallback version');
             if (fallbackVersion)
                 prebuiltVersion = fallbackVersion;
             const dl2 = await (0, utils_1.downloadFileWithErr)(`${vals_1.DL_URL}${prebuiltVersion}/${prebuiltTarget}${fileEnding}`, prebuiltPath);
@@ -1041,12 +1041,10 @@ async function run() {
             core.setFailed('invalid prebuilt-verify type');
         // Extract
         core.debug(`Extracting ${prebuiltPath}`);
-        if (prebuiltTarget.includes('windows-msvc')) {
-            exec.execFile(qstract, ['--zip', '-C', `${vals_1.TMP_DIR}`, prebuiltPath]);
-        }
-        else {
-            exec.execFile(qstract, ['-z', '-C', `${vals_1.TMP_DIR}`, prebuiltPath]);
-        }
+        if (prebuiltTarget.includes('windows-msvc'))
+            exec.execFile(qstract, ['--zip', '-C', vals_1.TMP_DIR, prebuiltPath]);
+        else
+            exec.execFile(qstract, ['-z', '-C', vals_1.TMP_DIR, prebuiltPath]);
         let tmpBin = `${vals_1.TMP_DIR}${node_path_1.sep}cargo-prebuilt`;
         let finalBin = `${vals_1.INSTALL_DIR}${node_path_1.sep}cargo-prebuilt`;
         if (prebuiltTarget.includes('windows-msvc')) {
@@ -1060,24 +1058,40 @@ async function run() {
         // Install prebuilt crates if needed
         if (pkgs !== '') {
             const args = [];
-            if (target !== '')
-                args.push(`--target=${target}`);
-            if (indexKey !== '')
-                args.push(`--index-key=${indexKey}`);
-            if (index !== '')
-                args.push(`--index=${index}`);
-            if (auth !== '')
-                args.push(`--auth=${auth}`);
-            if (config !== '')
-                args.push(`--config=${config}`);
-            if (path !== '')
-                args.push(`--path=${path}`);
-            if (reportPath !== '')
-                args.push(`--report-path=${reportPath}`);
+            if (target !== '') {
+                args.push('--target');
+                args.push(target);
+            }
+            if (indexKey !== '') {
+                args.push('--index-key');
+                args.push(indexKey);
+            }
+            if (index !== '') {
+                args.push('--index');
+                args.push(index);
+            }
+            if (auth !== '') {
+                args.push('--auth');
+                args.push(auth);
+            }
+            if (config !== '') {
+                args.push('--config');
+                args.push(config);
+            }
+            if (path !== '') {
+                args.push('--path');
+                args.push(path);
+            }
+            if (reportPath !== '') {
+                args.push('--report-path');
+                args.push(reportPath);
+            }
+            if (sig !== '') {
+                args.push('--sig');
+                args.push(sig);
+            }
             if (ci === 'true')
                 args.push('--ci');
-            if (sig !== '')
-                args.push(`--sig=${sig}`);
             if (noVerify === 'true')
                 args.push('--no-verify');
             if (safe === 'true')
