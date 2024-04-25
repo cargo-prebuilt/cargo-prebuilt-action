@@ -702,7 +702,7 @@ const exec = __importStar(__nccwpck_require__(337));
 const vals_1 = __nccwpck_require__(722);
 const sha256_1 = __nccwpck_require__(710);
 const utils_1 = __nccwpck_require__(442);
-const QSTRACT_DL_URL = 'https://github.com/cargo-prebuilt/qstract/releases/download/v0.2.1/';
+const QSTRACT_DL_URL = 'https://github.com/cargo-prebuilt/qstract/releases/download/v0.2.2/';
 async function installQstract() {
     let dlFile;
     let dlHash;
@@ -712,7 +712,7 @@ async function installQstract() {
             if (node_process_1.platform === 'linux') {
                 dlFile = 'armv7-unknown-linux-musleabihf';
                 dlHash =
-                    'c753d53de1c545e2d2ab200d0039030ee87227f664cd467e43d9164dfe988351';
+                    'cf5873c7f1ab8bb290461be9bf5cf228fd6514d6935c58d2d2371807f9db2b4b';
             }
             else
                 core.setFailed('unsupported platform');
@@ -721,17 +721,17 @@ async function installQstract() {
             if (node_process_1.platform === 'linux') {
                 dlFile = 'aarch64-unknown-linux-musl';
                 dlHash =
-                    '02daab626235b83e3f4d10a7b9f8c23f2ed9064ebdd8a2c37df8fc44d2e49489';
+                    'ed70461b244ddb70f404e977d80953064894e58eaf765d6e7a427e5ea6825558';
             }
             else if (node_process_1.platform === 'darwin') {
                 dlFile = 'aarch64-apple-darwin';
                 dlHash =
-                    'e74fb3c7ac9022a4cbebed8e6e2f7a2f33f702f254149ec65d8f86bc85e393bf';
+                    'd25739ab9e422ddc27d3fabd5d15fc559ad5e1dd2733247871c94d3283a9df0d';
             }
             else if (node_process_1.platform === 'win32') {
                 dlFile = 'aarch64-pc-windows-msvc.exe';
                 dlHash =
-                    'e58d9486c9e79e104d4fb0f24005c11ee63f48607802ba92f61891e44fe345f6';
+                    '9aca16d7573a399fa76f07fc8ecebc041974835d58411139261cbb8e06b983bf';
             }
             else
                 core.setFailed('unsupported platform');
@@ -740,22 +740,22 @@ async function installQstract() {
             if (node_process_1.platform === 'linux') {
                 dlFile = 'x86_64-unknown-linux-musl';
                 dlHash =
-                    'd84ce8b6232184c63abc416142c6461deaf086ee0b0cb499bc8cd6e895ea151c';
+                    '7ed02b0f0fa3a0a9fe736c770344570e010a76a5d87fa79445703a7962810975';
             }
             else if (node_process_1.platform === 'darwin') {
                 dlFile = 'x86_64-apple-darwin';
                 dlHash =
-                    '99340796fd1bdd291d6baf517a97f27cb0032ddb2f8891637c3aa406d0ca16de';
+                    'c98544c1416a82320615e8db78babaae2e117b66fff052e40230e32379a2be03';
             }
             else if (node_process_1.platform === 'win32') {
                 dlFile = 'x86_64-pc-windows-msvc.exe';
                 dlHash =
-                    'f7dd87b512b164b7c37375d1acb27b8cc868f72d10d9952414c42c80040e5d6f';
+                    'd358098f4f7a26014c45ae568ef65a2abc422ea09d1fe80143f3bcdda22e090f';
             }
             else if (node_process_1.platform === 'freebsd') {
                 dlFile = 'x86_64-unknown-freebsd';
                 dlHash =
-                    '444834d9c3084b4761d58934f59feef9905ef660e7ee9cf411b0f33556ae346c';
+                    '51b5bfe2ab4fdbfe05c563af6c21cf59ec437f9c1a409f115a3f086edaaf12a9';
             }
             else
                 core.setFailed('unsupported platform');
@@ -764,7 +764,7 @@ async function installQstract() {
             if (node_process_1.platform === 'linux') {
                 dlFile = 's390x-unknown-linux-gnu';
                 dlHash =
-                    'f925013bec975df407d293a6eb30d641568c393a226707ec87c80d5f3d045893';
+                    '7298ee90656b7024e8ef893b1cb952dfa52b9acfb4a6ad67cb8ff163d2cfcbde';
             }
             else
                 core.setFailed('unsupported platform');
