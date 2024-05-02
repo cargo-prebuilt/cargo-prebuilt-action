@@ -978,17 +978,24 @@ async function run() {
         const prebuiltVerify = core.getInput('prebuilt-verify');
         const pkgs = core.getInput('pkgs');
         const target = core.getInput('target');
-        const indexKey = core.getInput('index-key');
+        const safe = core.getInput('safe');
+        const update = core.getInput('update');
         const index = core.getInput('index');
+        const pubKey = core.getInput('pub-key');
         const auth = core.getInput('auth');
-        const config = core.getInput('config');
+        const indexKey = core.getInput('index-key');
+        const ci = core.getInput('ci');
+        const noSig = core.getInput('no-sig');
+        const noHash = core.getInput('no-hash');
+        const hashBins = core.getInput('hash-bins');
         const path = core.getInput('path');
         const reportPath = core.getInput('report-path');
-        const ci = core.getInput('ci');
-        const sig = core.getInput('sig');
-        const noVerify = core.getInput('no-verify');
-        const safe = core.getInput('safe');
+        const noCreatePath = core.getInput('no-create-path');
+        const reports = core.getInput('reports');
+        const config = core.getInput('config');
+        const requireConfig = core.getInput('require-config');
         const out = core.getInput('out');
+        const getLatest = core.getInput('get-latest');
         const color = core.getInput('color');
         if (prebuiltVersion === 'latest') {
             const latest = (0, utils_1.getVersions)();
@@ -1058,50 +1065,66 @@ async function run() {
         // Install prebuilt crates if needed
         if (pkgs !== '') {
             const args = [];
+            if (safe === 'true')
+                args.push('--safe');
+            if (update === 'true')
+                args.push('--update');
+            if (ci === 'true')
+                args.push('--ci');
+            if (noSig === 'true')
+                args.push('--no-sig');
+            if (noHash === 'true')
+                args.push('--no-hash');
+            if (hashBins === 'true')
+                args.push('--hash-bins');
+            if (noCreatePath === 'true')
+                args.push('--no-create-path');
+            if (requireConfig === 'true')
+                args.push('--require-config');
+            if (out === 'true')
+                args.push('--out');
+            if (getLatest === 'true')
+                args.push('--get-latest');
+            if (color === 'true')
+                args.push('--color');
+            if (color === 'false')
+                args.push('--no-color');
             if (target !== '') {
                 args.push('--target');
                 args.push(target);
-            }
-            if (indexKey !== '') {
-                args.push('--index-key');
-                args.push(indexKey);
             }
             if (index !== '') {
                 args.push('--index');
                 args.push(index);
             }
+            if (pubKey !== '') {
+                args.push('--pub-key');
+                args.push(pubKey);
+            }
             if (auth !== '') {
                 args.push('--auth');
                 args.push(auth);
             }
-            if (config !== '') {
-                args.push('--config');
-                args.push(config);
+            if (indexKey !== '') {
+                args.push('--index-key');
+                args.push(indexKey);
             }
             if (path !== '') {
                 args.push('--path');
                 args.push(path);
             }
             if (reportPath !== '') {
-                args.push('--report-path');
+                args.push('--reportPath');
                 args.push(reportPath);
             }
-            if (sig !== '') {
-                args.push('--sig');
-                args.push(sig);
+            if (reports !== '') {
+                args.push('--reports');
+                args.push(reports);
             }
-            if (ci === 'true')
-                args.push('--ci');
-            if (noVerify === 'true')
-                args.push('--no-verify');
-            if (safe === 'true')
-                args.push('--safe');
-            if (out === 'true')
-                args.push('--out');
-            if (color === 'true')
-                args.push('--color');
-            if (color === 'false')
-                args.push('--no-color');
+            if (config !== '') {
+                args.push('--config');
+                args.push(config);
+            }
             args.push(pkgs);
             const output = exec.execFile(finalBin, args);
             core.setOutput('out', output);
