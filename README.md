@@ -76,8 +76,46 @@ jobs:
 
 ## Inputs
 
-See [action.yml](action.yml)
+See [action.yml](action.yml) for all options.
+
+- ```yaml
+  prebuilt-version: 'Version of cargo-prebuilt to use'
+    default: latest
+  ```
+
+- ```yaml
+  prebuilt-target: 'Target for the version of cargo-prebuilt to install'
+    default: current
+  ```
+
+- ```yaml
+  prebuilt-verify: 'Verify downloaded cargo prebuilt'
+    options:
+      - 'none: Do not verify'
+      - 'sha256: Verify using sha256 hash
+      (Only for making sure the download is not corrupted)'
+      - 'minisign: Verify using minisign (Using rsign2)'
+    default: 'sha256'
+  ```
+
+- ```yaml
+  pkgs: 'A CSV list of prebuilt crates needed with
+    optional version numbers (see cargo-prebuilt cli)'
+    default: ''
+  ```
 
 ## Outputs
 
 See [action.yml](action.yml)
+
+- ```yaml
+  prebuilt-version: 'Cargo prebuilt version that was installed'
+  ```
+
+- ```yaml
+  prebuilt-target: 'Cargo prebuilt target that was installed'
+  ```
+
+- ```yaml
+  out : 'Stdout of cargo-prebuilt if it downloaded any tools'
+  ```
