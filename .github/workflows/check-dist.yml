@@ -20,7 +20,7 @@ permissions:
   contents: read
 
 env:
-  PNPM_VERSION: latest   
+  PNPM_VERSION: latest
 
 jobs:
   check-dist:
@@ -34,7 +34,7 @@ jobs:
         with:
           node-version: 20.x
 
-      - uses: pnpm/action-setup@v3
+      - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
           version: ${{ env.PNPM_VERSION }}
