@@ -14,7 +14,7 @@ See:
 | Action Versions | Prebuilt Versions | Note                     |
 |-----------------|-------------------|--------------------------|
 | 4.\*.\*         | 0.7.\*            |                          |
-| 3.\*.\*         | 0.6.\*            |                          |
+| 3.\*.\*         | 0.6.\*            | Deprecated               |
 | < 3             | < 6               | Deprecated and untracked |
 
 ## Usage
