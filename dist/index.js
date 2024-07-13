@@ -942,7 +942,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.installQstract = void 0;
+exports.installQstract = installQstract;
 const node_process_1 = __nccwpck_require__(742);
 const core = __importStar(__nccwpck_require__(933));
 const exec = __importStar(__nccwpck_require__(337));
@@ -1038,7 +1038,6 @@ async function installQstract() {
     core.info('Installed qstract');
     return binPath;
 }
-exports.installQstract = installQstract;
 
 
 /***/ }),
@@ -1071,7 +1070,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.installRsign2 = void 0;
+exports.installRsign2 = installRsign2;
 const node_process_1 = __nccwpck_require__(742);
 const core = __importStar(__nccwpck_require__(933));
 const exec = __importStar(__nccwpck_require__(337));
@@ -1170,7 +1169,6 @@ async function installRsign2(qstract) {
     core.info('Installed rsign2');
     return toolPath;
 }
-exports.installRsign2 = installRsign2;
 
 
 /***/ }),
@@ -1206,7 +1204,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.run = void 0;
+exports.run = run;
 const node_fs_1 = __importDefault(__nccwpck_require__(561));
 const node_path_1 = __nccwpck_require__(411);
 const core = __importStar(__nccwpck_require__(933));
@@ -1391,7 +1389,6 @@ async function run() {
             core.setFailed(error.message);
     }
 }
-exports.run = run;
 
 
 /***/ }),
@@ -1427,7 +1424,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.verifyFileMinisign = void 0;
+exports.verifyFileMinisign = verifyFileMinisign;
 const node_path_1 = __importDefault(__nccwpck_require__(411));
 const exec = __importStar(__nccwpck_require__(337));
 const vals_1 = __nccwpck_require__(722);
@@ -1445,7 +1442,6 @@ async function verifyFileMinisign(version, fileName, filePath, rsign2) {
         `${minisignFilePath}`
     ]);
 }
-exports.verifyFileMinisign = verifyFileMinisign;
 
 
 /***/ }),
@@ -1455,7 +1451,8 @@ exports.verifyFileMinisign = verifyFileMinisign;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.hashFile = exports.verifyFileHash = void 0;
+exports.verifyFileHash = verifyFileHash;
+exports.hashFile = hashFile;
 const node_fs_1 = __nccwpck_require__(561);
 const node_crypto_1 = __nccwpck_require__(5);
 const vals_1 = __nccwpck_require__(722);
@@ -1468,7 +1465,6 @@ async function verifyFileHash(version, filePath) {
     if (!sha256File.includes(fileHash))
         throw new Error('sha256 hash does not match');
 }
-exports.verifyFileHash = verifyFileHash;
 async function hashFile(filePath) {
     return new Promise(resolve => {
         const fd = (0, node_fs_1.readFileSync)(filePath);
@@ -1476,7 +1472,6 @@ async function hashFile(filePath) {
         resolve(hash);
     });
 }
-exports.hashFile = hashFile;
 
 
 /***/ }),
@@ -1500,7 +1495,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.addPath = exports.setFailed = exports.debug = exports.error = exports.warning = exports.info = exports.setOutput = exports.getInput = void 0;
+exports.getInput = getInput;
+exports.setOutput = setOutput;
+exports.info = info;
+exports.warning = warning;
+exports.error = error;
+exports.debug = debug;
+exports.setFailed = setFailed;
+exports.addPath = addPath;
 const node_process_1 = __importDefault(__nccwpck_require__(742));
 const node_os_1 = __importDefault(__nccwpck_require__(612));
 const node_fs_1 = __importDefault(__nccwpck_require__(561));
@@ -1539,7 +1541,6 @@ function getInput(name, options) {
     }
     return val.trim();
 }
-exports.getInput = getInput;
 /**
  * Sets the value of an output.
  *
@@ -1554,7 +1555,6 @@ function setOutput(name, value) {
     node_process_1.default.stdout.write(node_os_1.default.EOL);
     issueCommand('set-output', { name }, toCommandValue(value));
 }
-exports.setOutput = setOutput;
 /**
  * Writes info to log with console.log.
  * @param message info message
@@ -1562,7 +1562,6 @@ exports.setOutput = setOutput;
 function info(message) {
     node_process_1.default.stdout.write(message + node_os_1.default.EOL);
 }
-exports.info = info;
 /**
  * Adds a warning issue
  * @param message warning issue message. Errors will be converted to string via toString()
@@ -1571,7 +1570,6 @@ exports.info = info;
 function warning(message, properties = {}) {
     issueCommand('warning', toCommandProperties(properties), message instanceof Error ? message.toString() : message);
 }
-exports.warning = warning;
 /**
  * Adds an error issue
  * @param message error issue message. Errors will be converted to string via toString()
@@ -1580,7 +1578,6 @@ exports.warning = warning;
 function error(message, properties = {}) {
     issueCommand('error', toCommandProperties(properties), message instanceof Error ? message.toString() : message);
 }
-exports.error = error;
 /**
  * Writes debug message to user log
  * @param message debug message
@@ -1588,7 +1585,6 @@ exports.error = error;
 function debug(message) {
     issueCommand('debug', {}, message);
 }
-exports.debug = debug;
 /**
  * Sets the action status to failed.
  * When the action exits it will be with an exit code of 1
@@ -1598,7 +1594,6 @@ function setFailed(message) {
     node_process_1.default.exitCode = ExitCode.Failure;
     error(message);
 }
-exports.setFailed = setFailed;
 /**
  * Prepends inputPath to the PATH (for this action and future actions)
  * @param inputPath
@@ -1613,7 +1608,6 @@ function addPath(inputPath) {
     }
     node_process_1.default.env['PATH'] = `${inputPath}${node_path_1.default.delimiter}${node_process_1.default.env['PATH']}`;
 }
-exports.addPath = addPath;
 /**
  *
  * @param annotationProperties
@@ -1746,7 +1740,8 @@ function escapeProperty(s) {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.execGetOutput = exports.execFile = void 0;
+exports.execFile = execFile;
+exports.execGetOutput = execGetOutput;
 const node_child_process_1 = __nccwpck_require__(718);
 function execFile(file, args, options) {
     if (!options)
@@ -1755,13 +1750,11 @@ function execFile(file, args, options) {
         options.encoding = 'utf8';
     return (0, node_child_process_1.execFileSync)(file, args, options);
 }
-exports.execFile = execFile;
 function execGetOutput(command) {
     return (0, node_child_process_1.execSync)(command, {
         encoding: 'utf8'
     });
 }
-exports.execGetOutput = execGetOutput;
 
 
 /***/ }),
@@ -1797,7 +1790,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.downloadFileWithErr = exports.downloadFile = exports.currentTarget = exports.getVersions = void 0;
+exports.getVersions = getVersions;
+exports.currentTarget = currentTarget;
+exports.downloadFile = downloadFile;
+exports.downloadFileWithErr = downloadFileWithErr;
 const node_process_1 = __nccwpck_require__(742);
 const node_fs_1 = __importDefault(__nccwpck_require__(561));
 const promises_1 = __nccwpck_require__(402);
@@ -1822,7 +1818,6 @@ function getVersions() {
         return -1;
     });
 }
-exports.getVersions = getVersions;
 function currentTarget() {
     switch (node_process_1.arch) {
         case 'arm':
@@ -1867,12 +1862,10 @@ function currentTarget() {
     core.setFailed('unsupported or missing platform');
     return 'NULL';
 }
-exports.currentTarget = currentTarget;
 async function downloadFile(url, path) {
     if (!(await downloadFileWithErr(url, path)))
         core.setFailed(`Could not download ${url}`);
 }
-exports.downloadFile = downloadFile;
 async function downloadFileWithErr(url, path) {
     core.debug(`Started download of ${url} to ${path}`);
     const res = await fetch(url);
@@ -1886,7 +1879,6 @@ async function downloadFileWithErr(url, path) {
     core.debug(`Could not download ${url}`);
     return false;
 }
-exports.downloadFileWithErr = downloadFileWithErr;
 
 
 /***/ }),
