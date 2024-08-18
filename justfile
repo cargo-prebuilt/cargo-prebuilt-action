@@ -16,6 +16,7 @@ sup-lint LOG_LEVEL=default_log_level:
     -e VALIDATE_ALL_CODEBASE=true \
     -e TYPESCRIPT_DEFAULT_STYLE=prettier \
     -e VALIDATE_JAVASCRIPT_STANDARD=false \
+    -e VALIDATE_TYPESCRIPT_STANDARD=false \
     -e VALIDATE_JSCPD=false \
     -v ./:/tmp/lint \
-    ghcr.io/super-linter/super-linter:slim-latest
+    ghcr.io/super-linter/super-linter:slim-v6
