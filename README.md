@@ -12,7 +12,7 @@ See:
 ## Compatibility
 
 | Action Versions | Prebuilt Versions | Note                     |
-|-----------------|-------------------|--------------------------|
+| --------------- | ----------------- | ------------------------ |
 | 4.\*.\*         | 0.7.\*            |                          |
 | 3.\*.\*         | 0.6.\*            | Deprecated               |
 | < 3             | < 6               | Deprecated and untracked |
@@ -117,5 +117,5 @@ See [action.yml](action.yml)
   ```
 
 - ```yaml
-  out : 'Stdout of cargo-prebuilt if it downloaded any tools'
+  out: 'Stdout of cargo-prebuilt if it downloaded any tools'
   ```

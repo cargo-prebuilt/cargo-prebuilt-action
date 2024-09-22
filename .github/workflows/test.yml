@@ -58,11 +58,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./
-      - run: "[[ \"$(cargo prebuilt --version)\" != \"\" ]]"
+      - run: '[[ "$(cargo prebuilt --version)" != "" ]]'
       - uses: ./
         with:
           prebuilt-version: 0.6.0
-      - run: "[[ \"$(cargo prebuilt --version)\" == \"Version: 0.6.0\" ]]"
+      - run: '[[ "$(cargo prebuilt --version)" == "Version: 0.6.0" ]]'
   test-linux-tools:
     runs-on: ubuntu-latest
     steps:
@@ -73,7 +73,7 @@ jobs:
       - run: just --version
       - run: which just
       - run: rtx --version
-      - run: "[[ \"$(bacon --version)\" == \"bacon 2.11.0\" ]]"
+      - run: '[[ "$(bacon --version)" == "bacon 2.11.0" ]]'
   test-macos-tools:
     runs-on: macos-13
     steps:
@@ -84,7 +84,7 @@ jobs:
       - run: just --version
       - run: which just
       - run: rtx --version
-      - run: "[[ \"$(bacon --version)\" == \"bacon 2.11.0\" ]]"
+      - run: '[[ "$(bacon --version)" == "bacon 2.11.0" ]]'
   test-macos-14-tools:
     runs-on: macos-14
     steps:
@@ -95,7 +95,7 @@ jobs:
       - run: just --version
       - run: which just
       - run: rtx --version
-      - run: "[[ \"$(bacon --version)\" == \"bacon 2.11.0\" ]]"
+      - run: '[[ "$(bacon --version)" == "bacon 2.11.0" ]]'
   test-windows-tools:
     runs-on: windows-latest
     steps:
@@ -107,7 +107,7 @@ jobs:
         run: just --version
       - run: where.exe just
       - shell: bash
-        run: "[[ \"$(bacon --version)\" == \"bacon 2.11.0\" ]]"
+        run: '[[ "$(bacon --version)" == "bacon 2.11.0" ]]'
   test-dup:
     runs-on: ubuntu-latest
     steps:
@@ -115,12 +115,12 @@ jobs:
       - uses: ./
         with:
           pkgs: just@1.14.0
-      - run: "[[ \"$(just --version)\" == \"just 1.14.0\" ]]"
+      - run: '[[ "$(just --version)" == "just 1.14.0" ]]'
       - uses: ./
         with:
           out: false
           pkgs: just@1.14.0
-      - run: "[[ \"$(just --version)\" == \"just 1.14.0\" ]]"
+      - run: '[[ "$(just --version)" == "just 1.14.0" ]]'
       - run: which just
   test-minisign:
     strategy:

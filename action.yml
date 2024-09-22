@@ -19,7 +19,9 @@ inputs:
     description: 'Verify downloaded cargo prebuilt'
     default: 'sha256'
   pkgs:
-    description: 'A CSV list of prebuilt crates needed with optional version numbers (see cargo-prebuilt cli)'
+    description:
+      'A CSV list of prebuilt crates needed with optional version numbers (see
+      cargo-prebuilt cli)'
     default: ''
 
   target:
@@ -35,7 +37,8 @@ inputs:
     description: 'Index to use'
     default: ''
   pub-key:
-    description: 'A public verifying key encoded as base64. (Or a list of them using CSV).'
+    description:
+      'A public verifying key encoded as base64. (Or a list of them using CSV).'
     default: ''
   auth:
     description: 'Auth token to use for private indexes'
@@ -44,7 +47,8 @@ inputs:
     description: 'Index to use, pulling from config file'
     default: ''
   ci:
-    description: 'Do not download reports, check for a config file, and ignore safe mode'
+    description:
+      'Do not download reports, check for a config file, and ignore safe mode'
     default: 'true'
   no-sig:
     description: 'Do not verify downloaded info.jsons and hashes.jsons'
@@ -56,19 +60,27 @@ inputs:
     description: 'Hash and verify extracted binaries'
     default: ''
   path:
-    description: 'Path to the folder where downloaded binaries will be installed. (Default: $CARGO_HOME/bin)'
+    description:
+      'Path to the folder where downloaded binaries will be installed. (Default:
+      $CARGO_HOME/bin)'
     default: ''
   report-path:
-    description: 'Path to the folder where the reports will be put (Default: See https://github.com/cargo-prebuilt/cargo-prebuilt/blob/main/docs/PATHS.md#reports)'
+    description:
+      'Path to the folder where the reports will be put (Default: See
+      https://github.com/cargo-prebuilt/cargo-prebuilt/blob/main/docs/PATHS.md#reports)'
     default: ''
   no-create-path:
     description: 'Do not create the report and/or bin folder if it is missing'
     default: ''
   reports:
-    description: 'Reports to be downloaded in a CSV format (Default: license) (See: See https://github.com/cargo-prebuilt/cargo-prebuilt/blob/main/docs/REPORT_TYPES.md)'
+    description:
+      'Reports to be downloaded in a CSV format (Default: license) (See: See
+      https://github.com/cargo-prebuilt/cargo-prebuilt/blob/main/docs/REPORT_TYPES.md)'
     default: ''
   config:
-    description: 'Path to the config file (Default: See https://github.com/cargo-prebuilt/cargo-prebuilt/blob/main/docs/PATHS.md#config)'
+    description:
+      'Path to the config file (Default: See
+      https://github.com/cargo-prebuilt/cargo-prebuilt/blob/main/docs/PATHS.md#config)'
     default: ''
   require-config:
     description: 'Require a config file to be used. (--ci will override this)'
