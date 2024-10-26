@@ -45,7 +45,7 @@ jobs:
         include:
           - os: ubuntu-latest
           - os: macos-13
-          - os: macos-14
+          - os: macos-latest
           - os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
@@ -85,8 +85,8 @@ jobs:
       - run: which just
       - run: rtx --version
       - run: '[[ "$(bacon --version)" == "bacon 2.11.0" ]]'
-  test-macos-14-tools:
-    runs-on: macos-14
+  test-macos-latest-tools:
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ./
@@ -129,7 +129,7 @@ jobs:
         include:
           - os: ubuntu-latest
           - os: macos-13
-          - os: macos-14
+          - os: macos-latest
           - os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
@@ -154,7 +154,7 @@ jobs:
         include:
           - os: ubuntu-latest
           - os: macos-13
-          - os: macos-14
+          - os: macos-latest
           - os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
