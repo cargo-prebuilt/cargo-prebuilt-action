@@ -10,11 +10,11 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import process from 'node:process'
-import os from 'node:os'
+import crypto from 'node:crypto'
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
-import { v4 as uuidv4 } from 'uuid'
+import process from 'node:process'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-shadow */
@@ -112,6 +112,7 @@ export function getInput(name: string, options?: InputOptions): string {
  * @param     name     name of the output to set
  * @param     value    value to store. Non-string values will be converted to a string via JSON.stringify
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function setOutput(name: string, value: any): void {
   const filePath = process.env['GITHUB_OUTPUT'] || ''
   if (filePath) {
@@ -235,7 +236,7 @@ function issueFileCommand(command: string, message: any): void {
 }
 
 function prepareKeyValueMessage(key: string, value: any): string {
-  const delimiter = `ghadelimiter_${uuidv4()}`
+  const delimiter = `ghadelimiter_${crypto.randomUUID()}`
   const convertedValue = toCommandValue(value)
 
   // These should realistically never happen, but just in case someone finds a
