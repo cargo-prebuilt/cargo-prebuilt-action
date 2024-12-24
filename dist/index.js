@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 410:
+/***/ 47:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -22,21 +22,31 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.installQstract = installQstract;
 const node_process_1 = __nccwpck_require__(708);
-const core = __importStar(__nccwpck_require__(262));
-const exec = __importStar(__nccwpck_require__(920));
-const vals_1 = __nccwpck_require__(422);
-const sha256_1 = __nccwpck_require__(153);
-const utils_1 = __nccwpck_require__(633);
+const core = __importStar(__nccwpck_require__(827));
+const exec = __importStar(__nccwpck_require__(937));
+const vals_1 = __nccwpck_require__(605);
+const sha256_1 = __nccwpck_require__(574);
+const utils_1 = __nccwpck_require__(236);
 const QSTRACT_DL_URL = 'https://github.com/cargo-prebuilt/qstract/releases/download/v0.2.4/';
 async function installQstract() {
     let dlFile;
@@ -130,7 +140,7 @@ async function installQstract() {
 
 /***/ }),
 
-/***/ 569:
+/***/ 818:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -150,21 +160,31 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.installRsign2 = installRsign2;
 const node_process_1 = __nccwpck_require__(708);
-const core = __importStar(__nccwpck_require__(262));
-const exec = __importStar(__nccwpck_require__(920));
-const vals_1 = __nccwpck_require__(422);
-const sha256_1 = __nccwpck_require__(153);
-const utils_1 = __nccwpck_require__(633);
+const core = __importStar(__nccwpck_require__(827));
+const exec = __importStar(__nccwpck_require__(937));
+const vals_1 = __nccwpck_require__(605);
+const sha256_1 = __nccwpck_require__(574);
+const utils_1 = __nccwpck_require__(236);
 const RSIGN_DL_URL = 'https://github.com/cargo-prebuilt/index/releases/download/rsign2-0.6.3/';
 async function installRsign2(qstract) {
     let dlFile;
@@ -261,7 +281,7 @@ async function installRsign2(qstract) {
 
 /***/ }),
 
-/***/ 855:
+/***/ 84:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -281,13 +301,23 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -295,14 +325,14 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = run;
 const node_fs_1 = __importDefault(__nccwpck_require__(24));
 const node_path_1 = __nccwpck_require__(760);
-const core = __importStar(__nccwpck_require__(262));
-const exec = __importStar(__nccwpck_require__(920));
-const utils_1 = __nccwpck_require__(633);
-const vals_1 = __nccwpck_require__(422);
-const sha256_1 = __nccwpck_require__(153);
-const minisign_1 = __nccwpck_require__(128);
-const dl_qstract_1 = __nccwpck_require__(410);
-const dl_rsign2_1 = __nccwpck_require__(569);
+const core = __importStar(__nccwpck_require__(827));
+const exec = __importStar(__nccwpck_require__(937));
+const utils_1 = __nccwpck_require__(236);
+const vals_1 = __nccwpck_require__(605);
+const sha256_1 = __nccwpck_require__(574);
+const minisign_1 = __nccwpck_require__(955);
+const dl_qstract_1 = __nccwpck_require__(47);
+const dl_rsign2_1 = __nccwpck_require__(818);
 async function run() {
     try {
         let prebuiltVersion = core.getInput('prebuilt-version');
@@ -481,7 +511,7 @@ async function run() {
 
 /***/ }),
 
-/***/ 128:
+/***/ 955:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -501,22 +531,32 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.verifyFileMinisign = verifyFileMinisign;
 const node_path_1 = __importDefault(__nccwpck_require__(760));
-const exec = __importStar(__nccwpck_require__(920));
-const vals_1 = __nccwpck_require__(422);
-const utils_1 = __nccwpck_require__(633);
+const exec = __importStar(__nccwpck_require__(937));
+const vals_1 = __nccwpck_require__(605);
+const utils_1 = __nccwpck_require__(236);
 async function verifyFileMinisign(version, fileName, filePath, rsign2) {
     const archivePath = node_path_1.default.dirname(filePath);
     const minisignFilePath = `${archivePath}/${fileName}.minisig`;
@@ -534,7 +574,7 @@ async function verifyFileMinisign(version, fileName, filePath, rsign2) {
 
 /***/ }),
 
-/***/ 153:
+/***/ 574:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 
@@ -543,7 +583,7 @@ exports.verifyFileHash = verifyFileHash;
 exports.hashFile = hashFile;
 const node_fs_1 = __nccwpck_require__(24);
 const node_crypto_1 = __nccwpck_require__(598);
-const vals_1 = __nccwpck_require__(422);
+const vals_1 = __nccwpck_require__(605);
 // TODO: Use sha256 from qstract?
 async function verifyFileHash(version, filePath) {
     const res = await fetch(`${vals_1.DL_URL}${version}/hashes.sha256`);
@@ -564,7 +604,7 @@ async function hashFile(filePath) {
 
 /***/ }),
 
-/***/ 262:
+/***/ 827:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -824,7 +864,7 @@ function escapeProperty(s) {
 
 /***/ }),
 
-/***/ 920:
+/***/ 937:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 
@@ -848,7 +888,7 @@ function execGetOutput(command) {
 
 /***/ }),
 
-/***/ 633:
+/***/ 236:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -868,13 +908,23 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -887,8 +937,8 @@ const node_process_1 = __nccwpck_require__(708);
 const node_fs_1 = __importDefault(__nccwpck_require__(24));
 const promises_1 = __nccwpck_require__(466);
 const node_stream_1 = __nccwpck_require__(75);
-const core = __importStar(__nccwpck_require__(262));
-const exec = __importStar(__nccwpck_require__(920));
+const core = __importStar(__nccwpck_require__(827));
+const exec = __importStar(__nccwpck_require__(937));
 function getVersions() {
     const output = exec.execGetOutput('git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git');
     const re = /v((\d+)\.(\d+)\.(\d+))[^-]/g;
@@ -972,7 +1022,7 @@ async function downloadFileWithErr(url, path) {
 
 /***/ }),
 
-/***/ 422:
+/***/ 605:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -1092,7 +1142,7 @@ var __webpack_exports__ = {};
 var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const main_1 = __nccwpck_require__(855);
+const main_1 = __nccwpck_require__(84);
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 (0, main_1.run)();
 
