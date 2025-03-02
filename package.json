@@ -1,7 +1,7 @@
 {
   "name": "install-cargo-prebuilt-action",
   "description": "Install cargo prebuilt to a runner and some packages if you want.",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "author": "harmless-tech, cargo-prebuilt",
   "private": true,
   "homepage": "https://github.com/cargo-prebuilt/cargo-prebuilt-action",
