@@ -6,7 +6,7 @@ import { hashFile } from '../sha256'
 import { downloadFile } from '../utils'
 
 const QSTRACT_DL_URL =
-  'https://github.com/cargo-prebuilt/qstract/releases/download/v0.2.4/'
+  'https://github.com/cargo-prebuilt/qstract/releases/download/v0.2.7/'
 
 export async function installQstract(): Promise<string> {
   let dlFile
@@ -19,48 +19,48 @@ export async function installQstract(): Promise<string> {
       if (platform === 'linux') {
         dlFile = 'armv7-unknown-linux-musleabihf'
         dlHash =
-          '32402ded7f58241eed6d4828b390cf5e1eb36a76cfdfc309a1e60f4b19451f1a'
+          '78445544d6594c784218c7ee697c05d6c89ac0c3968110bb6c596930f7bbb0e3'
       } else core.setFailed('unsupported platform')
       break
     case 'arm64':
       if (platform === 'linux') {
         dlFile = 'aarch64-unknown-linux-musl'
         dlHash =
-          '737e5ce7c575f4f67fadca5da700b71c002206b33a417e787b8a97312538b71d'
+          '2f0dd680ab0a3d5a1b0540b597bbc03ba56137dd90e78b223e44c79c5ef51646'
       } else if (platform === 'darwin') {
         dlFile = 'aarch64-apple-darwin'
         dlHash =
-          '98deb3f9e974feeb4cd71d2043994276870076f2f061480eabf74ed1ce57ef03'
+          '5db19a7f1b2756aac83737a8fc8257a5cfd0e365f4a3b4346d1abda7db5d5fa7'
       } else if (platform === 'win32') {
         dlFile = 'aarch64-pc-windows-msvc.exe'
         dlHash =
-          '9e6a5c049a54282de979094bb3a115ae3a26af764aa6743af17e1084964a1a39'
+          'afc42a5a9db07460f6eedd81505185fb28970d33363166e81f6eae2058316cc5'
       } else core.setFailed('unsupported platform')
       break
     case 'x64':
       if (platform === 'linux') {
         dlFile = 'x86_64-unknown-linux-musl'
         dlHash =
-          '707502e94f3c06ea2ed926a567f3999f7534e0f6aae4e994b17df657adb48318'
+          '9735286f26b844fe404f0637f05a2940294c49d3b7000a8062e7ff5add24a92a'
       } else if (platform === 'darwin') {
         dlFile = 'x86_64-apple-darwin'
         dlHash =
-          'a3ff3767eb11a0ac54111855b6bbc416921f121ca0e1f4a0ce0c9c97c4c16994'
+          '24dffda26597a5660bbd0fe9b4684bb2eec5872d971d96975ab705808f619a84'
       } else if (platform === 'win32') {
         dlFile = 'x86_64-pc-windows-msvc.exe'
         dlHash =
-          '6badce5c4702ebbe3bcb0e222aeef78ded42639fefbdc83d622adf753a30b359'
+          'f24ebe890b9b3ad8443df9c9ebd4df34c4e90bbb09b6d64f874ef6eecec12813'
       } else if (platform === 'freebsd') {
         dlFile = 'x86_64-unknown-freebsd'
         dlHash =
-          'f1ac3af9f0ddb816e8433139621ce4f1fd4f9d312a1ffe6ec7aa93dd396126fc'
+          '3b8297655f12ff6e8042b6b00a4a8d4566a77e17c76f2dca3cacd2d7a718a47c'
       } else core.setFailed('unsupported platform')
       break
     case 's390x':
       if (platform === 'linux') {
         dlFile = 's390x-unknown-linux-gnu'
         dlHash =
-          'af5b85c77fcf6a8b6c916f2171e1fbd2f69be8192d8b1cc38d95c71758b1bc73'
+          '34b837adb8de3ded0946ef6e166eb2908c6a78f614ef7c6e99551be5f842b2c7'
       } else core.setFailed('unsupported platform')
       break
   }

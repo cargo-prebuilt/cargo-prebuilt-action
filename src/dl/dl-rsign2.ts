@@ -6,7 +6,7 @@ import { hashFile } from '../sha256'
 import { downloadFile } from '../utils'
 
 const RSIGN_DL_URL =
-  'https://github.com/cargo-prebuilt/index/releases/download/rsign2-0.6.3/'
+  'https://github.com/cargo-prebuilt/index/releases/download/rsign2-0.6.4/'
 
 export async function installRsign2(qstract: string): Promise<string> {
   let dlFile
@@ -19,48 +19,48 @@ export async function installRsign2(qstract: string): Promise<string> {
       if (platform === 'linux') {
         dlFile = 'armv7-unknown-linux-musleabihf'
         dlHash =
-          '2a187ff785d0520ecdd14af4fb0834d0cdb90d41fa42470413ba6f8187e5142b'
+          '77e5bd64bd2d60c0127adeeb0e2a8dd5a69fd9f6c61ec53706774c7df3d04b6f'
       } else core.setFailed('unsupported platform')
       break
     case 'arm64':
       if (platform === 'linux') {
         dlFile = 'aarch64-unknown-linux-musl'
         dlHash =
-          '18803b59a0c4baa9b3d5c7a26a5e6336df9c5ff04c851944ffafa87e111ae026'
+          '5be366398760c0a908f197581c3c1b378e08b2dfc40d86acafa60cc5218ea52c'
       } else if (platform === 'darwin') {
         dlFile = 'aarch64-apple-darwin'
         dlHash =
-          'e5770f96ad51aab5a35e595462283ae521f3fd995158c82f220d28b498802cf0'
+          '946a35aa2bcff08b1e14b9834224d947e4719ffaf09a87c548b479f002a01454'
       } else if (platform === 'win32') {
         dlFile = 'aarch64-pc-windows-msvc'
         dlHash =
-          '07cfee377c07427a95a70dd8a8c81d0c2e376fe5ae848cc294fd9da762b57263'
+          '05acb9a14e6c81cc7ff4d82d4cd2213c1424a2a7f41479c13080725f52e9d4c7'
       } else core.setFailed('unsupported platform')
       break
     case 'x64':
       if (platform === 'linux') {
         dlFile = 'x86_64-unknown-linux-musl'
         dlHash =
-          'd013658223ba79bd84b2e409ed26f2c533dcb15546071b33eb32b499bade9349'
+          '5c7c17e5f65d740e80fd3bf187701a90dbde1829521c77aaca30c06c24fbca92'
       } else if (platform === 'darwin') {
         dlFile = 'x86_64-apple-darwin'
         dlHash =
-          'cf3a305a760beb7245b564dee4b180198542f63aef2f954e1f9f3f732a7cf6d0'
+          'ac85d87369576b5be0d381bb47c702028e1750dfaa1d81c698743a98ebdfb72a'
       } else if (platform === 'win32') {
         dlFile = 'x86_64-pc-windows-msvc'
         dlHash =
-          '8e77f7f2f01413cc2ef767fd2adac04ef4972749625dc29a4ee09a014895ee4d'
+          'b39ab2cc69476b3cb7a4ce22f2f2aaf3ae2f3dae343a7396d0f73ab27ab9c76d'
       } else if (platform === 'freebsd') {
         dlFile = 'x86_64-unknown-freebsd'
         dlHash =
-          '4e32038f9acece4996be3671e709b9d188d7e7464c3c13954ee12298244bd884'
+          '26dec3708735ff35c0b5a295a75893f0238a531d34f483ba279ca26f43496c72'
       } else core.setFailed('unsupported platform')
       break
     case 's390x':
       if (platform === 'linux') {
         dlFile = 's390x-unknown-linux-gnu'
         dlHash =
-          '73c4a77aef2bace5a9ea1471348203c26e2c8bb869d587f7376ddff31063b8ad'
+          '548ba02e63894975488388dc0edc057a0dea8177d2f7852a4ae92205b7341b0b'
       } else core.setFailed('unsupported platform')
       break
   }

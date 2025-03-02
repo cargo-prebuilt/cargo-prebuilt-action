@@ -1,12 +1,11 @@
+pwd := `pwd`
+
 default:
     just -l
 
-pwd := `pwd`
-
 default_log_level := 'INFO'
-runner := 'docker'
 sup-lint LOG_LEVEL=default_log_level:
-    {{runner}} run \
+    docker run \
     -t --rm --pull=always \
     --platform=linux/amd64 \
     -e LOG_LEVEL={{LOG_LEVEL}} \

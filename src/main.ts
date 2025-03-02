@@ -9,6 +9,7 @@ import { verifyFileMinisign } from './minisign'
 import { installQstract } from './dl/dl-qstract'
 import { installRsign2 } from './dl/dl-rsign2'
 
+// TODO: Retry option that runs cargo-prebuilt again if it fails?
 export async function run(): Promise<void> {
   try {
     let prebuiltVersion: string = core.getInput('prebuilt-version')
