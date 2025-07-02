@@ -2,8 +2,8 @@ import { arch, platform } from 'node:process'
 import fs from 'node:fs'
 import { finished } from 'node:stream/promises'
 import { Readable } from 'node:stream'
-import * as core from './trim/core'
-import * as exec from './trim/exec'
+import * as core from './trim/core.js'
+import * as exec from './trim/exec.js'
 
 export function getVersions(): string[] {
   const output = exec.execGetOutput(
@@ -11,7 +11,7 @@ export function getVersions(): string[] {
   )
 
   const re = /v((\d+)\.(\d+)\.(\d+))[^-]/g
-  const tmp = [...output.matchAll(re)].map(a => {
+  const tmp = [...output.matchAll(re)].map((a) => {
     return a[1]
   })
 

@@ -1,8 +1,15 @@
-import { describe } from 'node:test'
-//import { expect } from '@jest/globals'
+import { jest } from '@jest/globals'
 
-// TODO: Tests!!!
+//const { run } = await import('../src/main.js')
 
-describe('null', () => {
-  it('null-it', () => {})
+describe('main.ts', () => {
+  beforeEach(() => {})
+
+  afterEach(() => {
+    jest.resetAllMocks()
+  })
+
+  it('null', async () => {
+    expect(true).toBe(true)
+  })
 })

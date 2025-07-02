@@ -1,9 +1,9 @@
 import { arch, platform } from 'node:process'
-import * as core from '../trim/core'
-import * as exec from '../trim/exec'
-import { TMP_DIR } from '../vals'
-import { hashFile } from '../sha256'
-import { downloadFile } from '../utils'
+import * as core from '../trim/core.js'
+import * as exec from '../trim/exec.js'
+import { TMP_DIR } from '../vals.js'
+import { hashFile } from '../sha256.js'
+import { downloadFile } from '../utils.js'
 
 const QSTRACT_DL_URL =
   'https://github.com/cargo-prebuilt/qstract/releases/download/v0.2.8/'

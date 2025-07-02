@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { createHash } from 'node:crypto'
-import { DL_URL } from './vals'
+import { DL_URL } from './vals.js'
 
 export async function verifyFileHash(
   version: string,
@@ -18,7 +18,7 @@ export async function verifyFileHash(
 
 // TODO: Use sha256 from qstract?
 export async function hashFile(filePath: string): Promise<string> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const fd = readFileSync(filePath)
     const hash = createHash('sha256').update(fd).digest('hex')
     resolve(hash)

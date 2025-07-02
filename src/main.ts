@@ -1,13 +1,13 @@
 import fs from 'node:fs'
 import { sep } from 'node:path'
-import * as core from './trim/core'
-import * as exec from './trim/exec'
-import { currentTarget, downloadFileWithErr, getVersions } from './utils'
-import { DL_URL, INSTALL_DIR, TMP_DIR } from './vals'
-import { verifyFileHash } from './sha256'
-import { verifyFileMinisign } from './minisign'
-import { installQstract } from './dl/dl-qstract'
-import { installRsign2 } from './dl/dl-rsign2'
+import * as core from './trim/core.js'
+import * as exec from './trim/exec.js'
+import { currentTarget, downloadFileWithErr, getVersions } from './utils.js'
+import { DL_URL, INSTALL_DIR, TMP_DIR } from './vals.js'
+import { verifyFileHash } from './sha256.js'
+import { verifyFileMinisign } from './minisign.js'
+import { installQstract } from './dl/dl-qstract.js'
+import { installRsign2 } from './dl/dl-rsign2.js'
 
 // TODO: Retry option that runs cargo-prebuilt again if it fails?
 export async function run(): Promise<void> {
@@ -187,7 +187,7 @@ export async function run(): Promise<void> {
     }
 
     core.debug(`Cleaning up tmp dir ${TMP_DIR}`)
-    fs.rm(TMP_DIR, { recursive: true, force: true }, err => {
+    fs.rm(TMP_DIR, { recursive: true, force: true }, (err) => {
       if (err) core.error(err.message)
     })
 

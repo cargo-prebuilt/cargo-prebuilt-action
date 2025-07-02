@@ -96,9 +96,9 @@ Thumbs.db
 
 # Ignore built ts files
 __tests__/runner/*
-lib/**/*
 
 # Editors
+*.code-workspace
 .idea/
 .fleet/
 .vscode/
