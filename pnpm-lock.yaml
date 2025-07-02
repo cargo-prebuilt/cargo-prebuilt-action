@@ -20,6 +20,9 @@ importers:
       '@eslint/compat':
         specifier: ^1.3.1
         version: 1.3.1(eslint@9.30.1)
+      '@eslint/eslintrc':
+        specifier: ^3.3.1
+        version: 3.3.1
       '@github/local-action':
         specifier: ^3.2.1
         version: 3.2.1(eslint@9.30.1)
