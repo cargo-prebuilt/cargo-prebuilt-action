@@ -56,6 +56,13 @@ export async function installRsign2(qstract: string): Promise<string> {
           '26dec3708735ff35c0b5a295a75893f0238a531d34f483ba279ca26f43496c72'
       } else core.setFailed('unsupported platform')
       break
+    case 'riscv64':
+      if (platform === 'linux') {
+        dlFile = 'riscv64gc-unknown-linux-gnu' // TODO: Musl version?
+        dlHash =
+          '2139d29cdf23d0be3c6cbce00acfc0d27cf5bf0ee2780ec0b8a7fd2961f7f146'
+      } else core.setFailed('unsupported platform')
+      break
     case 's390x':
       if (platform === 'linux') {
         dlFile = 's390x-unknown-linux-gnu'

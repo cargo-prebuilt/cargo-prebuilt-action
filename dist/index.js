@@ -47,7 +47,7 @@ const exec = __importStar(__nccwpck_require__(937));
 const vals_1 = __nccwpck_require__(605);
 const sha256_1 = __nccwpck_require__(574);
 const utils_1 = __nccwpck_require__(236);
-const QSTRACT_DL_URL = 'https://github.com/cargo-prebuilt/qstract/releases/download/v0.2.7/';
+const QSTRACT_DL_URL = 'https://github.com/cargo-prebuilt/qstract/releases/download/v0.2.8/';
 async function installQstract() {
     let dlFile;
     let dlHash;
@@ -57,7 +57,7 @@ async function installQstract() {
             if (node_process_1.platform === 'linux') {
                 dlFile = 'armv7-unknown-linux-musleabihf';
                 dlHash =
-                    '78445544d6594c784218c7ee697c05d6c89ac0c3968110bb6c596930f7bbb0e3';
+                    '8696095e880152242ce14aefc1ce1b4b67a11cc75e062dacc8596b7465eaf0a1';
             }
             else
                 core.setFailed('unsupported platform');
@@ -66,17 +66,17 @@ async function installQstract() {
             if (node_process_1.platform === 'linux') {
                 dlFile = 'aarch64-unknown-linux-musl';
                 dlHash =
-                    '2f0dd680ab0a3d5a1b0540b597bbc03ba56137dd90e78b223e44c79c5ef51646';
+                    'd3870a102fbe50301d7fdf685ceb8e7b679c3b1afc92653bedb9137389e354c1';
             }
             else if (node_process_1.platform === 'darwin') {
                 dlFile = 'aarch64-apple-darwin';
                 dlHash =
-                    '5db19a7f1b2756aac83737a8fc8257a5cfd0e365f4a3b4346d1abda7db5d5fa7';
+                    '8ce9e27d38da5ec3797f48708e2fc99982302f6c3ff52b3b0818287914365a50';
             }
             else if (node_process_1.platform === 'win32') {
                 dlFile = 'aarch64-pc-windows-msvc.exe';
                 dlHash =
-                    'afc42a5a9db07460f6eedd81505185fb28970d33363166e81f6eae2058316cc5';
+                    '07bd05f3c70296f3076bc34dbb4d1da1a35ee1253a299525baab8eefe9a20e66';
             }
             else
                 core.setFailed('unsupported platform');
@@ -85,22 +85,31 @@ async function installQstract() {
             if (node_process_1.platform === 'linux') {
                 dlFile = 'x86_64-unknown-linux-musl';
                 dlHash =
-                    '9735286f26b844fe404f0637f05a2940294c49d3b7000a8062e7ff5add24a92a';
+                    '315cc94e280473ef849146dd15d9459be078a59d3612e52a4015d97f64b52eac';
             }
             else if (node_process_1.platform === 'darwin') {
                 dlFile = 'x86_64-apple-darwin';
                 dlHash =
-                    '24dffda26597a5660bbd0fe9b4684bb2eec5872d971d96975ab705808f619a84';
+                    'b190c6ed4b88e0f6bcd9d274389c120d80a85b70660584595af572b106623c42';
             }
             else if (node_process_1.platform === 'win32') {
                 dlFile = 'x86_64-pc-windows-msvc.exe';
                 dlHash =
-                    'f24ebe890b9b3ad8443df9c9ebd4df34c4e90bbb09b6d64f874ef6eecec12813';
+                    'fe98cadc7f185eb8fb9bf651e9423b74eddf6cf6c8beb0085de4ca25b2c42b27';
             }
             else if (node_process_1.platform === 'freebsd') {
                 dlFile = 'x86_64-unknown-freebsd';
                 dlHash =
-                    '3b8297655f12ff6e8042b6b00a4a8d4566a77e17c76f2dca3cacd2d7a718a47c';
+                    '348b108302d24d79677186a34c363997b49b957e4a88e5da34c8699b44fe8d20';
+            }
+            else
+                core.setFailed('unsupported platform');
+            break;
+        case 'riscv64':
+            if (node_process_1.platform === 'linux') {
+                dlFile = 'riscv64gc-unknown-linux-musl';
+                dlHash =
+                    'aa9a71164a2c6c12e7876b2fab4b9d00912981866dd2097243724c2c97779b9c';
             }
             else
                 core.setFailed('unsupported platform');
@@ -109,7 +118,7 @@ async function installQstract() {
             if (node_process_1.platform === 'linux') {
                 dlFile = 's390x-unknown-linux-gnu';
                 dlHash =
-                    '34b837adb8de3ded0946ef6e166eb2908c6a78f614ef7c6e99551be5f842b2c7';
+                    '2d94c0de4a89fbe18cd531bbd95de7ec89f086edbd2fc81f2ccbfa58df5439ca';
             }
             else
                 core.setFailed('unsupported platform');
@@ -239,6 +248,15 @@ async function installRsign2(qstract) {
                 dlFile = 'x86_64-unknown-freebsd';
                 dlHash =
                     '26dec3708735ff35c0b5a295a75893f0238a531d34f483ba279ca26f43496c72';
+            }
+            else
+                core.setFailed('unsupported platform');
+            break;
+        case 'riscv64':
+            if (node_process_1.platform === 'linux') {
+                dlFile = 'riscv64gc-unknown-linux-gnu'; // TODO: Musl version?
+                dlHash =
+                    '2139d29cdf23d0be3c6cbce00acfc0d27cf5bf0ee2780ec0b8a7fd2961f7f146';
             }
             else
                 core.setFailed('unsupported platform');
