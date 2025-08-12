@@ -22,14 +22,14 @@ jobs:
           - os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./
       - run: cargo prebuilt just
       - run: just --version
   test-version: # make sure that the right version can be downloaded
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./
       - run: '[[ "$(cargo prebuilt --version)" != "" ]]'
       - uses: ./
@@ -39,7 +39,7 @@ jobs:
   test-linux-tools:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./
         with:
           pkgs: just,rtx-cli@1.34.0,bacon@2.11.0
@@ -50,7 +50,7 @@ jobs:
   test-macos-tools:
     runs-on: macos-13
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./
         with:
           pkgs: just,rtx-cli@1.34.0,bacon@2.11.0
@@ -61,7 +61,7 @@ jobs:
   test-macos-latest-tools:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./
         with:
           pkgs: just,rtx-cli@1.34.0,bacon@2.11.0
@@ -72,7 +72,7 @@ jobs:
   test-windows-tools:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./
         with:
           pkgs: just,bacon@2.11.0
@@ -84,7 +84,7 @@ jobs:
   test-dup:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./
         with:
           pkgs: just@1.14.0
@@ -106,7 +106,7 @@ jobs:
           - os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./
         with:
           prebuilt-verify: minisign
@@ -114,7 +114,7 @@ jobs:
   test-target:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./
         with:
           pkgs: just,rtx-cli@1.34.0,bacon@2.11.0
@@ -131,7 +131,7 @@ jobs:
           - os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./
         with:
           prebuilt-version: 0.7.0-rc.0
