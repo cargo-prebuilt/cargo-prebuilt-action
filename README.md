@@ -13,7 +13,8 @@ See:
 
 | Action Versions | Prebuilt Versions | Note                     |
 | --------------- | ----------------- | ------------------------ |
-| 4.\*.\*         | 0.7.\*            |                          |
+| 5.\*.\*         | 0.7.\*            |                          |
+| 4.\*.\*         | 0.7.\*            | Deprecated               |
 | 3.\*.\*         | 0.6.\*            | Deprecated               |
 | < 3             | < 6               | Deprecated and untracked |
 
@@ -29,9 +30,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - name: Install cargo-prebuilt
-        uses: cargo-prebuilt/cargo-prebuilt-action@v3
+        uses: cargo-prebuilt/cargo-prebuilt-action@v5
         with:
           pkgs: just,rtx-cli@1.34.1
 ```
@@ -48,9 +51,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - name: Install cargo-prebuilt
-        uses: cargo-prebuilt/cargo-prebuilt-action@v3
+        uses: cargo-prebuilt/cargo-prebuilt-action@v5
         with:
           pkgs: cargo-deny
       - run: cargo prebuilt just
@@ -66,9 +71,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - name: Install cargo-prebuilt
-        uses: cargo-prebuilt/cargo-prebuilt-action@v3
+        uses: cargo-prebuilt/cargo-prebuilt-action@v5
         with:
           prebuilt-version: 0.6.0
           prebuilt-target: aarch64-apple-darwin
