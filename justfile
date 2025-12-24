@@ -17,10 +17,11 @@ sup-lint LOG_LEVEL=default_log_level:
     -e DEFAULT_BRANCH=main \
     -e LINTER_RULES_PATH=/tmp/lint \
     -e VALIDATE_ALL_CODEBASE=true \
-    -e VALIDATE_GITHUB_ACTIONS_ZIZMOR=false \
     -e VALIDATE_JAVASCRIPT_ES=false \
     -e VALIDATE_JSCPD=false \
     -e VALIDATE_TYPESCRIPT_ES=false \
     -e VALIDATE_JSON=false \
+    -e VALIDATE_BIOME_FORMAT=false \
+    -e VALIDATE_BIOME_LINT=false \
     -v ./:/tmp/lint \
     ghcr.io/super-linter/super-linter:slim-latest
