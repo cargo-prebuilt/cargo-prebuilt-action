@@ -107,8 +107,8 @@ export async function run(): Promise<void> {
     // Extract
     core.debug(`Extracting ${prebuiltPath}`)
     if (prebuiltTarget.includes('windows-msvc'))
-      exec.exec(qstract, ['--zip', '-C', TMP_DIR, prebuiltPath])
-    else exec.exec(qstract, ['-z', '-C', TMP_DIR, prebuiltPath])
+      await exec.exec(qstract, ['--zip', '-C', TMP_DIR, prebuiltPath])
+    else await exec.exec(qstract, ['-z', '-C', TMP_DIR, prebuiltPath])
 
     let tmpBin = `${TMP_DIR}${sep}cargo-prebuilt`
     let finalBin = `${INSTALL_DIR}${sep}cargo-prebuilt`
@@ -116,7 +116,7 @@ export async function run(): Promise<void> {
       tmpBin += '.exe'
       finalBin += '.exe'
     }
-    exec.exec(`mv ${tmpBin} ${finalBin}`)
+    await exec.exec(`mv ${tmpBin} ${finalBin}`)
 
     core.addPath(INSTALL_DIR)
     core.info(`Installed cargo-prebuilt@${prebuiltVersion} at ${finalBin}`)
@@ -179,8 +179,8 @@ export async function run(): Promise<void> {
 
       args.push(pkgs)
 
-      const output = exec.exec(finalBin, args)
-      core.setOutput('out', output)
+      const output = await exec.getExecOutput(finalBin, args)
+      core.setOutput('out', output.stdout)
 
       if (path !== '') core.addPath(path)
       core.info(`Installed tools ${pkgs}`)

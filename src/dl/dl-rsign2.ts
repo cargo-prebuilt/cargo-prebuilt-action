@@ -89,7 +89,7 @@ export async function installRsign2(qstract: string): Promise<string> {
 
   // Extract
   core.debug('Extracting rsign')
-  exec.exec(qstract, ['-z', '-C', `${TMP_DIR}`, tarPath])
+  await exec.exec(qstract, ['-z', '-C', `${TMP_DIR}`, tarPath])
 
   let toolPath
   if (platform === 'win32') toolPath = `${TMP_DIR}/rsign.exe`
@@ -98,7 +98,7 @@ export async function installRsign2(qstract: string): Promise<string> {
   core.debug(`Tool path rsign ${toolPath}`)
 
   // Check if rsign works
-  exec.exec(toolPath, ['--version'])
+  await exec.exec(toolPath, ['--version'])
 
   core.info('Installed rsign2')
 

@@ -17,7 +17,7 @@ export async function verifyFileMinisign(
     minisignFilePath
   )
 
-  exec.exec(rsign2, [
+  await exec.exec(rsign2, [
     'verify',
     `${filePath}`,
     '-P',

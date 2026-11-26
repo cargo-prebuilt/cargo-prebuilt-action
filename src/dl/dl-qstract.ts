@@ -89,12 +89,12 @@ export async function installQstract(): Promise<string> {
   core.debug('Hash matched for qstract')
 
   if (!binPath.endsWith('.exe')) {
-    exec.exec(`chmod +x ${binPath}`)
+    await exec.exec(`chmod +x ${binPath}`)
     core.debug('Detected unix, trying to set exe bit with chmod')
   }
 
   // Test run
-  exec.exec(binPath, ['--version'])
+  await exec.exec(binPath, ['--version'])
 
   core.info('Installed qstract')
 

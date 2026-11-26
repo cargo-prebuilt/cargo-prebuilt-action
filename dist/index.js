@@ -29778,7 +29778,7 @@ async function verifyFileMinisign(version, fileName, filePath, rsign2) {
     const archivePath = path$1.dirname(filePath);
     const minisignFilePath = `${archivePath}/${fileName}.minisig`;
     await downloadFile(`${DL_URL}${version}/${fileName}.minisig`, minisignFilePath);
-    exec(rsign2, [
+    await exec(rsign2, [
         'verify',
         `${filePath}`,
         '-P',
@@ -29878,11 +29878,11 @@ async function installQstract() {
         setFailed('sha256 hash does not match for qstract');
     debug('Hash matched for qstract');
     if (!binPath.endsWith('.exe')) {
-        exec(`chmod +x ${binPath}`);
+        await exec(`chmod +x ${binPath}`);
         debug('Detected unix, trying to set exe bit with chmod');
     }
     // Test run
-    exec(binPath, ['--version']);
+    await exec(binPath, ['--version']);
     info('Installed qstract');
     return binPath;
 }
@@ -29976,7 +29976,7 @@ async function installRsign2(qstract) {
     debug('Hash matched for rsign');
     // Extract
     debug('Extracting rsign');
-    exec(qstract, ['-z', '-C', `${TMP_DIR}`, tarPath]);
+    await exec(qstract, ['-z', '-C', `${TMP_DIR}`, tarPath]);
     let toolPath;
     if (platform === 'win32')
         toolPath = `${TMP_DIR}/rsign.exe`;
@@ -29984,7 +29984,7 @@ async function installRsign2(qstract) {
         toolPath = `${TMP_DIR}/rsign`;
     debug(`Tool path rsign ${toolPath}`);
     // Check if rsign works
-    exec(toolPath, ['--version']);
+    await exec(toolPath, ['--version']);
     info('Installed rsign2');
     return toolPath;
 }
@@ -30069,16 +30069,16 @@ async function run() {
         // Extract
         debug(`Extracting ${prebuiltPath}`);
         if (prebuiltTarget.includes('windows-msvc'))
-            exec(qstract, ['--zip', '-C', TMP_DIR, prebuiltPath]);
+            await exec(qstract, ['--zip', '-C', TMP_DIR, prebuiltPath]);
         else
-            exec(qstract, ['-z', '-C', TMP_DIR, prebuiltPath]);
+            await exec(qstract, ['-z', '-C', TMP_DIR, prebuiltPath]);
         let tmpBin = `${TMP_DIR}${sep}cargo-prebuilt`;
         let finalBin = `${INSTALL_DIR}${sep}cargo-prebuilt`;
         if (prebuiltTarget.includes('windows-msvc')) {
             tmpBin += '.exe';
             finalBin += '.exe';
         }
-        exec(`mv ${tmpBin} ${finalBin}`);
+        await exec(`mv ${tmpBin} ${finalBin}`);
         addPath(INSTALL_DIR);
         info(`Installed cargo-prebuilt@${prebuiltVersion} at ${finalBin}`);
         setOutput('prebuilt-binary', finalBin);
@@ -30146,8 +30146,8 @@ async function run() {
                 args.push(config);
             }
             args.push(pkgs);
-            const output = exec(finalBin, args);
-            setOutput('out', output);
+            const output = await getExecOutput(finalBin, args);
+            setOutput('out', output.stdout);
             if (path !== '')
                 addPath(path);
             info(`Installed tools ${pkgs}`);
