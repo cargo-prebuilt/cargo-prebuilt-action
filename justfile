@@ -8,7 +8,7 @@ all:
 
 default_log_level := 'INFO'
 sup-lint LOG_LEVEL=default_log_level:
-    docker run \
+    podman run \
     -t --rm --pull=always \
     --platform=linux/amd64 \
     -e LOG_LEVEL={{LOG_LEVEL}} \
