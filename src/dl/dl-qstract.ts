@@ -1,6 +1,6 @@
 import { arch, platform } from 'node:process'
-import * as core from '../trim/core.js'
-import * as exec from '../trim/exec.js'
+import * as core from '@actions/core'
+import * as exec from '@actions/exec'
 import { TMP_DIR } from '../vals.js'
 import { hashFile } from '../sha256.js'
 import { downloadFile } from '../utils.js'
@@ -89,12 +89,12 @@ export async function installQstract(): Promise<string> {
   core.debug('Hash matched for qstract')
 
   if (!binPath.endsWith('.exe')) {
-    exec.execGetOutput(`chmod +x ${binPath}`)
+    exec.exec(`chmod +x ${binPath}`)
     core.debug('Detected unix, trying to set exe bit with chmod')
   }
 
   // Test run
-  exec.execFile(binPath, ['--version'])
+  exec.exec(binPath, ['--version'])
 
   core.info('Installed qstract')
 

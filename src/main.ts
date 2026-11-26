@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import { sep } from 'node:path'
-import * as core from './trim/core.js'
-import * as exec from './trim/exec.js'
+import * as core from '@actions/core'
+import * as exec from '@actions/exec'
 import { currentTarget, downloadFileWithErr, getVersions } from './utils.js'
 import { DL_URL, INSTALL_DIR, TMP_DIR } from './vals.js'
 import { verifyFileHash } from './sha256.js'
@@ -41,7 +41,7 @@ export async function run(): Promise<void> {
     const color: string = core.getInput('color')
 
     if (prebuiltVersion === 'latest') {
-      const latest = getVersions()
+      const latest = await getVersions()
       prebuiltVersion = latest[latest.length - 1]
       fallbackVersion = latest[latest.length - 2]
       core.info(
@@ -107,8 +107,8 @@ export async function run(): Promise<void> {
     // Extract
     core.debug(`Extracting ${prebuiltPath}`)
     if (prebuiltTarget.includes('windows-msvc'))
-      exec.execFile(qstract, ['--zip', '-C', TMP_DIR, prebuiltPath])
-    else exec.execFile(qstract, ['-z', '-C', TMP_DIR, prebuiltPath])
+      exec.exec(qstract, ['--zip', '-C', TMP_DIR, prebuiltPath])
+    else exec.exec(qstract, ['-z', '-C', TMP_DIR, prebuiltPath])
 
     let tmpBin = `${TMP_DIR}${sep}cargo-prebuilt`
     let finalBin = `${INSTALL_DIR}${sep}cargo-prebuilt`
@@ -116,7 +116,7 @@ export async function run(): Promise<void> {
       tmpBin += '.exe'
       finalBin += '.exe'
     }
-    exec.execGetOutput(`mv ${tmpBin} ${finalBin}`)
+    exec.exec(`mv ${tmpBin} ${finalBin}`)
 
     core.addPath(INSTALL_DIR)
     core.info(`Installed cargo-prebuilt@${prebuiltVersion} at ${finalBin}`)
@@ -179,7 +179,7 @@ export async function run(): Promise<void> {
 
       args.push(pkgs)
 
-      const output = exec.execFile(finalBin, args)
+      const output = exec.exec(finalBin, args)
       core.setOutput('out', output)
 
       if (path !== '') core.addPath(path)

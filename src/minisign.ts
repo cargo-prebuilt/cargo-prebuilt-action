@@ -1,5 +1,5 @@
 import path from 'node:path'
-import * as exec from './trim/exec.js'
+import * as exec from '@actions/exec'
 import { DL_URL, PREBUILT_INDEX_PUB_KEY } from './vals.js'
 import { downloadFile } from './utils.js'
 
@@ -17,7 +17,7 @@ export async function verifyFileMinisign(
     minisignFilePath
   )
 
-  exec.execFile(rsign2, [
+  exec.exec(rsign2, [
     'verify',
     `${filePath}`,
     '-P',

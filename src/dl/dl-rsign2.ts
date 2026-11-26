@@ -1,6 +1,6 @@
 import { arch, platform } from 'node:process'
-import * as core from '../trim/core.js'
-import * as exec from '../trim/exec.js'
+import * as core from '@actions/core'
+import * as exec from '@actions/exec'
 import { TMP_DIR } from '../vals.js'
 import { hashFile } from '../sha256.js'
 import { downloadFile } from '../utils.js'
@@ -89,7 +89,7 @@ export async function installRsign2(qstract: string): Promise<string> {
 
   // Extract
   core.debug('Extracting rsign')
-  exec.execFile(qstract, ['-z', '-C', `${TMP_DIR}`, tarPath])
+  exec.exec(qstract, ['-z', '-C', `${TMP_DIR}`, tarPath])
 
   let toolPath
   if (platform === 'win32') toolPath = `${TMP_DIR}/rsign.exe`
@@ -98,7 +98,7 @@ export async function installRsign2(qstract: string): Promise<string> {
   core.debug(`Tool path rsign ${toolPath}`)
 
   // Check if rsign works
-  exec.execFile(toolPath, ['--version'])
+  exec.exec(toolPath, ['--version'])
 
   core.info('Installed rsign2')
 

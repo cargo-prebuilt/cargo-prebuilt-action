@@ -2,16 +2,16 @@ import { arch, platform } from 'node:process'
 import fs from 'node:fs'
 import { finished } from 'node:stream/promises'
 import { Readable } from 'node:stream'
-import * as core from './trim/core.js'
-import * as exec from './trim/exec.js'
+import * as core from '@actions/core'
+import * as exec from '@actions/exec'
 
-export function getVersions(): string[] {
-  const output = exec.execGetOutput(
+export async function getVersions(): Promise<string[]> {
+  const output = await exec.getExecOutput(
     'git ls-remote --tags --refs https://github.com/cargo-prebuilt/cargo-prebuilt.git'
   )
 
   const re = /v((\d+)\.(\d+)\.(\d+))[^-]/g
-  const tmp = [...output.matchAll(re)].map((a) => {
+  const tmp = [...output.stdout.matchAll(re)].map((a) => {
     return a[1]
   })
 
